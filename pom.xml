@@ -51,7 +51,6 @@
             <scope>test</scope>
         </dependency>
 
-            <!-- Spring Boot Dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
@@ -68,7 +67,7 @@
                 <groupId>org.springframework.hateoas</groupId>
                 <artifactId>spring-hateoas</artifactId>
             </dependency>
-            <!-- Add your preferred database driver here, for example MySQL -->
+
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
