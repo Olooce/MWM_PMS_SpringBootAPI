@@ -1,8 +1,8 @@
 package oloo.mwm_pms.repositories;
 
-import oloo.mwm_pms.entities.Employee;
-import oloo.mwm_pms.entities.EmploymentType;
-import oloo.mwm_pms.entities.EmployeeStatus;
+import oloo.mwm_pms.entinties.Employee;
+import oloo.mwm_pms.entinties.EmployeeStatus;
+import oloo.mwm_pms.entinties.EmploymentType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
