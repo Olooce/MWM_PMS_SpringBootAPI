@@ -116,7 +116,7 @@ public class Employee {
     }
 }
 
- enum EmploymentType{
+enum EmploymentType{
 
 }
 
