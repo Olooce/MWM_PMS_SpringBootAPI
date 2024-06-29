@@ -11,7 +11,37 @@ public class Branch {
     private LocalDateTime dateCreated;
     private LocalDateTime dateModified;
 
-    public void setBranchId(long branchId) {
+    // Getters
+    public Long getBranchId() {
+        return branchId;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public String getBranchCode() {
+        return branchCode;
+    }
+
+    public Long getNoEmployees() {
+        return noEmployees;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public LocalDateTime getDateModified() {
+        return dateModified;
+    }
+
+    // Setters
+    public void setBranchId(Long branchId) {
         this.branchId = branchId;
     }
 
@@ -23,7 +53,7 @@ public class Branch {
         this.branchCode = branchCode;
     }
 
-    public void setNoEmployees(long noEmployees) {
+    public void setNoEmployees(Long noEmployees) {
         this.noEmployees = noEmployees;
     }
 
@@ -38,5 +68,4 @@ public class Branch {
     public void setDateModified(LocalDateTime dateModified) {
         this.dateModified = dateModified;
     }
-
 }
