@@ -123,3 +123,11 @@ public class SystemUser {
         this.dateModified = dateModified;
     }
 }
+
+enum UserStatus {
+    ACTIVE, INACTIVE, SUSPENDED, PENDING
+}
+
+enum PasswordStatus {
+    ACTIVE, RESET, LOCKED
+}
