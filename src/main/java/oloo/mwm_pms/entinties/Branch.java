@@ -12,24 +12,31 @@ public class Branch {
     private LocalDateTime dateModified;
 
     public void setBranchId(long branchId) {
+        this.branchId = branchId;
     }
 
     public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 
     public void setBranchCode(String branchCode) {
+        this.branchCode = branchCode;
     }
 
     public void setNoEmployees(long noEmployees) {
+        this.noEmployees = noEmployees;
     }
 
     public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public void setDateModified(LocalDateTime dateModified) {
+        this.dateModified = dateModified;
     }
-    
+
 }
