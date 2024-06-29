@@ -1,8 +1,7 @@
-package com.example.jdbcdemo.repository;
+package oloo.mwm_pms.repositories;
 
-import com.example.jdbcdemo.model.Branch;
+import oloo.mwm_pms.entinties.Branch;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -20,8 +19,7 @@ public class BranchRepository {
 
     public List<Branch> findAll(int page, int size) {
         int offset = page * size;
-        return jdbcTemplate.query(
-                "SELECT * FROM branches LIMIT ? OFFSET ?",
+        return jdbcTemplate.query("SELECT * FROM branches LIMIT ? OFFSET ?",
                 new Object[]{size, offset},
                 new BranchRowMapper()
         );
