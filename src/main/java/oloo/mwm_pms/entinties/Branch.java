@@ -31,6 +31,5 @@ public class Branch {
 
     public void setDateModified(LocalDateTime dateModified) {
     }
-
-    // Getters and Setters
+    
 }
