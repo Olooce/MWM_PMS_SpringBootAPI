@@ -1,6 +1,6 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.entities.Employee;
+import oloo.mwm_pms.entinties.Employee;
 import oloo.mwm_pms.repositories.EmployeeRepository;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
