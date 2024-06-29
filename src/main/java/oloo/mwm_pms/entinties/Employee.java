@@ -115,3 +115,10 @@ public class Employee {
         this.dateModified = dateModified;
     }
 }
+enum EmploymentType {
+    FULL_TIME, PART_TIME, CONTRACT, TEMPORARY
+}
+
+enum EmployeeStatus {
+    NEW, ACTIVE, LEAVING, TERMINATED
+}
