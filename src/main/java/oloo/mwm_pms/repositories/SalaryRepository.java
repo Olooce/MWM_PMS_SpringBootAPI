@@ -42,7 +42,7 @@ public class SalaryRepository {
 
     public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment(Long departmentId) {
         return jdbcTemplate.query(
-                "SELECT s.employee_id, SUM(s.total_allowances) AS totalAllowances, SUM(s.net_salary) AS netSalary FROM salaries s JOIN mwm_pms_db.employees e ON  e.employee_id = s.employee_id JOIN mwm_pms_db.departments d ON e.department_id = d.department_id WHERE d.department_id = ? GROUP BY s.employee_id",
+                "SELECT s.employee_id, SUM(s.total_allowances) AS totalAllowances, SUM(s.net_salary) AS netSalary FROM salaries s JOIN mwm_pms_db.employees e ON  e.employee_id = s.employee_id JOIN mwm_pms_db.departments d ON e.department_id = d.department_id WHERE d.department_id = ? GROUP BY s.employee_id LIMIT 10",
                 new Object[]{departmentId},
                 (rs, rowNum) -> Map.of(
                         "employeeId", rs.getBigDecimal("employee_id"),
