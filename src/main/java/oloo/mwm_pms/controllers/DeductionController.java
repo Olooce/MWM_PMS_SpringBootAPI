@@ -1,6 +1,6 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.entities.Deduction;
+import oloo.mwm_pms.entinties.Deduction;
 import oloo.mwm_pms.repositories.DeductionRepository;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
