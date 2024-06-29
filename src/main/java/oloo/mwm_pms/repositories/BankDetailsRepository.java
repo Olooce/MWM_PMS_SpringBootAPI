@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class BankDetailsRepository {
@@ -30,6 +31,7 @@ public class BankDetailsRepository {
     public int count() {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM bank_details", Integer.class);
     }
+
 
     private static class BankDetailsRowMapper implements RowMapper<BankDetails> {
         @Override

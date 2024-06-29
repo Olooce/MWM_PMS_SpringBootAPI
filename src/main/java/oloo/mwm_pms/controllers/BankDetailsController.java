@@ -36,36 +36,4 @@ public class BankDetailsController {
         return PagedModel.of(bankDetailsList, pageMetadata, linkBuilder.withSelfRel());
     }
 
-    @GetMapping("/{bankDetailsId}")
-    public BankDetails getBankDetailsById(@PathVariable Long bankDetailsId) {
-        return bankDetailsRepository.findById(bankDetailsId)
-                .orElseThrow(() -> new RuntimeException("Bank details not found with id: " + bankDetailsId));
-    }
-
-    @PostMapping
-    public BankDetails createBankDetails(@RequestBody BankDetails bankDetails) {
-        // Perform validation or business logic if needed before saving
-        return bankDetailsRepository.save(bankDetails);
-    }
-
-    @PutMapping("/{bankDetailsId}")
-    public BankDetails updateBankDetails(@PathVariable Long bankDetailsId, @RequestBody BankDetails updatedBankDetails) {
-        // Check if bank details exist
-        bankDetailsRepository.findById(bankDetailsId)
-                .orElseThrow(() -> new RuntimeException("Bank details not found with id: " + bankDetailsId));
-
-        // Update properties of the existing bank details
-        updatedBankDetails.setBankDetailsId(bankDetailsId);
-        return bankDetailsRepository.save(updatedBankDetails);
-    }
-
-    @DeleteMapping("/{bankDetailsId}")
-    public void deleteBankDetails(@PathVariable Long bankDetailsId) {
-        // Check if bank details exist
-        BankDetails bankDetails = bankDetailsRepository.findById(bankDetailsId)
-                .orElseThrow(() -> new RuntimeException("Bank details not found with id: " + bankDetailsId));
-
-        // Delete bank details
-        bankDetailsRepository.delete(bankDetails);
-    }
 }
