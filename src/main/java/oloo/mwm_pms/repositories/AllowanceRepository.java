@@ -1,6 +1,6 @@
 package oloo.mwm_pms.repositories;
 
-import oloo.mwm_pms.entities.Allowance;
+import oloo.mwm_pms.entinties.Allowance;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

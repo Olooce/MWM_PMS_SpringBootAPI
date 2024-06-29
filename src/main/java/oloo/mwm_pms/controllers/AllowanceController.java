@@ -1,6 +1,6 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.entities.Allowance;
+import oloo.mwm_pms.entinties.Allowance;
 import oloo.mwm_pms.repositories.AllowanceRepository;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
