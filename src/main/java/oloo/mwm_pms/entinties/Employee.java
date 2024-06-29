@@ -1,4 +1,4 @@
-package oloo.mwm_pms.entities;
+package oloo.mwm_pms.entinties;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -114,12 +114,4 @@ public class Employee {
     public void setDateModified(LocalDateTime dateModified) {
         this.dateModified = dateModified;
     }
-}
-
-enum EmploymentType{
-
-}
-
-enum EmployeeStatus{
-
 }
