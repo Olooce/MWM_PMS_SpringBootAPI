@@ -1,16 +1,12 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.entinties.Salary;
 import oloo.mwm_pms.repositories.SalaryRepository;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilderFactory;
+import oloo.mwm_pms.entinties.Salary;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/salaries")
@@ -22,17 +18,34 @@ public class SalaryController {
         this.salaryRepository = salaryRepository;
     }
 
-    @GetMapping
-    public PagedModel<Salary> getAllSalaries(@RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size) {
-        List<Salary> salaries = salaryRepository.findAll(page, size);
-        int totalSalaries = salaryRepository.count();
-        Pageable pageable = PageRequest.of(page, size);
-        PageImpl<Salary> salaryPage = new PageImpl<>(salaries, pageable, totalSalaries);
+    @GetMapping("/earnings-deductions/{employeeId}")
+    public Map<String, BigDecimal> getEarningsAndDeductionsByEmployee(@PathVariable Long employeeId) {
+        return salaryRepository.getEarningsAndDeductionsByEmployee(employeeId);
+    }
 
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, totalSalaries);
-        WebMvcLinkBuilderFactory factory = new WebMvcLinkBuilderFactory();
-        WebMvcLinkBuilder linkBuilder = factory.linkTo(WebMvcLinkBuilder.methodOn(SalaryController.class).getAllSalaries(page, size));
-        return PagedModel.of(salaries, pageMetadata, linkBuilder.withSelfRel());
+    @GetMapping("/allowances-net-salaries/{departmentId}")
+    public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment(@PathVariable Long departmentId) {
+        return salaryRepository.getTotalAllowancesAndNetSalariesByDepartment(departmentId);
+    }
+
+    @GetMapping("/total-net-salary")
+    public BigDecimal getTotalNetSalaryToPay() {
+        return salaryRepository.getTotalNetSalaryToPay();
+    }
+
+    @GetMapping("/payment-history/{employeeId}")
+    public List<Map<String, Object>> getPaymentHistoryByEmployee(@PathVariable Long employeeId) {
+        return salaryRepository.getPaymentHistoryByEmployee(employeeId);
+    }
+
+    @GetMapping
+    public List<Salary> getAllSalaries(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size) {
+        return salaryRepository.findAll(page, size);
+    }
+
+    @GetMapping("/count")
+    public int countSalaries() {
+        return salaryRepository.count();
     }
 }
