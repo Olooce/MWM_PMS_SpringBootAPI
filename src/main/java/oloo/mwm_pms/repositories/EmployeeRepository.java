@@ -34,6 +34,20 @@ public class EmployeeRepository {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM employees", Integer.class);
     }
 
+    public List<Employee> findNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate) {
+        return jdbcTemplate.query("SELECT * FROM employees WHERE date_created BETWEEN ? AND ? GROUP BY department_id",
+                new Object[]{startDate, endDate},
+                new EmployeeRowMapper()
+        );
+    }
+
+    public Long countActiveEmployeesInDepartment(Long departmentId) {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM employees WHERE department_id = ? AND status = 'ACTIVE'",
+                new Object[]{departmentId},
+                Long.class
+        );
+    }
+
     private static class EmployeeRowMapper implements RowMapper<Employee> {
         @Override
         public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {
