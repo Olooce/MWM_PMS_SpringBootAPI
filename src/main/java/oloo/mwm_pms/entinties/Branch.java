@@ -1,4 +1,4 @@
-package com.example.jdbcdemo.model;
+package oloo.mwm_pms.entinties;
 
 import java.time.LocalDateTime;
 
