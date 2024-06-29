@@ -1,7 +1,5 @@
-package com.example.jdbcdemo.controller;
+package oloo.mwm_pms.controllers;
 
-import com.example.jdbcdemo.model.Branch;
-import com.example.jdbcdemo.repository.BranchRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
