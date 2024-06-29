@@ -1,8 +1,8 @@
 package oloo.mwm_pms.repositories;
 
-import oloo.mwm_pms.entities.SystemUser;
-import oloo.mwm_pms.entities.UserStatus;
-import oloo.mwm_pms.entities.PasswordStatus;
+import oloo.mwm_pms.entinties.SystemUser;
+import oloo.mwm_pms.entinties.UserStatus;
+import oloo.mwm_pms.entinties.PasswordStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

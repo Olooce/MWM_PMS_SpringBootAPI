@@ -124,10 +124,10 @@ public class SystemUser {
     }
 }
 
-enum UserStatus {
+public enum UserStatus {
     ACTIVE, INACTIVE, SUSPENDED, PENDING
 }
 
-enum PasswordStatus {
+public enum PasswordStatus {
     ACTIVE, RESET, LOCKED
 }
