@@ -5,13 +5,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class SalaryRepository {
@@ -22,37 +21,16 @@ public class SalaryRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Map<String, BigDecimal> getEarningsAndDeductionsByEmployee(Long employeeId) {
-        return jdbcTemplate.queryForMap("SELECT SUM(total_gross_earnings) AS totalEarnings, SUM(total_deductions) AS totalDeductions, SUM(net_salary) AS netPay FROM salaries WHERE employee_id = ?",
-                employeeId
+    public List<Salary> findAll(int page, int size) {
+        int offset = page * size;
+        return jdbcTemplate.query("SELECT * FROM salaries LIMIT ? OFFSET ?",
+                new Object[]{size, offset},
+                new SalaryRowMapper()
         );
     }
 
-    public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment(Long departmentId) {
-        return jdbcTemplate.query("SELECT employee_id, SUM(total_allowances) AS totalAllowances, SUM(net_salary) AS netSalary FROM salaries WHERE department_id = ? GROUP BY employee_id",
-                new Object[]{departmentId},
-                (rs, rowNum) -> Map.of(
-                        "employeeId", rs.getBigDecimal("employee_id"),
-                        "totalAllowances", rs.getBigDecimal("total_allowances"),
-                        "netSalary", rs.getBigDecimal("net_salary")
-                )
-        );
-    }
-
-    public BigDecimal getTotalNetSalaryToPay() {
-        return jdbcTemplate.queryForObject("SELECT SUM(net_salary) FROM salaries", BigDecimal.class);
-    }
-
-    public List<Map<String, Object>> getPaymentHistoryByEmployee(Long employeeId) {
-        return jdbcTemplate.query("SELECT month, total_gross_earnings, total_taxes, net_salary FROM salaries WHERE employee_id = ? AND month < CURRENT_DATE ORDER BY month DESC",
-                new Object[]{employeeId},
-                (rs, rowNum) -> Map.of(
-                        "month", rs.getObject("month", LocalDate.class),
-                        "totalGrossEarnings", rs.getBigDecimal("total_gross_earnings"),
-                        "totalTaxes", rs.getBigDecimal("total_taxes"),
-                        "netSalary", rs.getBigDecimal("net_salary")
-                )
-        );
+    public int count() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM salaries", Integer.class);
     }
 
     private static class SalaryRowMapper implements RowMapper<Salary> {
