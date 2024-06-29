@@ -1,6 +1,6 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.entities.ContactInfo;
+import oloo.mwm_pms.entinties.ContactInfo;
 import oloo.mwm_pms.repositories.ContactInfoRepository;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
