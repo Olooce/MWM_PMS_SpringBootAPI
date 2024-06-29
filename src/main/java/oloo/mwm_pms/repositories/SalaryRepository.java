@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class SalaryRepository {
@@ -31,6 +32,18 @@ public class SalaryRepository {
 
     public int count() {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM salaries", Integer.class);
+    }
+
+    public Map<String, BigDecimal> getEarningsAndDeductionsByEmployee(Long employeeId) {
+    }
+
+    public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment(Long departmentId) {
+    }
+
+    public List<Map<String, Object>> getPaymentHistoryByEmployee(Long employeeId) {
+    }
+
+    public BigDecimal getTotalNetSalaryToPay() {
     }
 
     private static class SalaryRowMapper implements RowMapper<Salary> {
