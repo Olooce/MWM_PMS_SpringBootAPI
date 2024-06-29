@@ -115,3 +115,11 @@ public class Employee {
         this.dateModified = dateModified;
     }
 }
+
+ enum EmploymentType{
+
+}
+
+enum EmployeeStatus{
+
+}
