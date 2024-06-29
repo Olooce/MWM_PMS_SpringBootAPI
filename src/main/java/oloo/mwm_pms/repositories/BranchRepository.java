@@ -2,6 +2,7 @@ package oloo.mwm_pms.repositories;
 
 import oloo.mwm_pms.entinties.Branch;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;

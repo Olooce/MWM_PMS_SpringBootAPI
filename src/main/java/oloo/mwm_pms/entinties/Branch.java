@@ -11,5 +11,26 @@ public class Branch {
     private LocalDateTime dateCreated;
     private LocalDateTime dateModified;
 
+    public void setBranchId(long branchId) {
+    }
+
+    public void setBranchName(String branchName) {
+    }
+
+    public void setBranchCode(String branchCode) {
+    }
+
+    public void setNoEmployees(long noEmployees) {
+    }
+
+    public void setDescription(String description) {
+    }
+
+    public void setDateCreated(LocalDateTime dateCreated) {
+    }
+
+    public void setDateModified(LocalDateTime dateModified) {
+    }
+
     // Getters and Setters
 }
