@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public class SalaryRepository {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM salaries", Integer.class);
     }
 
-    public Map<String, BigDecimal> getEarningsAndDeductionsByEmployee(Long employeeId) {
+    public Map<String, Object> getEarningsAndDeductionsByEmployee(Long employeeId) {
         return jdbcTemplate.queryForMap(
                 "SELECT SUM(total_gross_earnings) AS totalEarnings, SUM(total_deductions) AS totalDeductions, SUM(net_salary) AS netPay FROM salaries WHERE employee_id = ?",
                 employeeId

@@ -19,7 +19,7 @@ public class SalaryController {
     }
 
     @GetMapping("/earnings-deductions/{employeeId}")
-    public Map<String, BigDecimal> getEarningsAndDeductionsByEmployee(@PathVariable Long employeeId) {
+    public Map<String, Object> getEarningsAndDeductionsByEmployee(@PathVariable Long employeeId) {
         return salaryRepository.getEarningsAndDeductionsByEmployee(employeeId);
     }
 
