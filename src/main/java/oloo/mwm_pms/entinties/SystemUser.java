@@ -1,4 +1,4 @@
-package oloo.mwm_pms.entities;
+package oloo.mwm_pms.entinties;
 
 import java.time.LocalDateTime;
 
