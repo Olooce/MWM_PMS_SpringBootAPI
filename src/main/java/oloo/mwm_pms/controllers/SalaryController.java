@@ -48,6 +48,5 @@ public class SalaryController {
     public int countSalaries() {
         return salaryRepository.count();
     }
-
-    @PostMapping()
+    
 }
