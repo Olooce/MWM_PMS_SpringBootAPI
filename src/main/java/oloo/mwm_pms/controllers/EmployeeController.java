@@ -28,9 +28,11 @@ public class EmployeeController {
         return employeeRepository.countActiveEmployeesInDepartment(departmentId);
     }
 
-    @PostMapping("/add-employee/{departmentId}"){
+    @PostMapping("/add-employee/{departmentId}")
+    public long addNewEmployee(@RequestParam long departmentId){
         Employee employee = new Employee();
-        employee.setDepartmentId(1L);
+        employee.setDepartmentId(departmentId);
 
+        return departmentId;
     }
 }
