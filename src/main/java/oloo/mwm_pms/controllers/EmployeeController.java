@@ -1,8 +1,6 @@
 package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.entinties.Employee;
-import oloo.mwm_pms.entinties.Salary;
-import oloo.mwm_pms.repositories.EmployeeRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -12,26 +10,26 @@ import java.util.List;
 @RequestMapping("/employees")
 public class EmployeeController {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
     @GetMapping
     public List<Employee> getAllEmployee(@RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size) {
-        return employeeRepository.findAll(page, size);
+        return employeeService.getAllEmployee(page, size);
     }
 
     @GetMapping("/new-by-department")
     public List<Employee> getNewEmployeesGroupedByDepartment(@RequestParam LocalDate startDate,
                                                              @RequestParam LocalDate endDate) {
-        return employeeRepository.findNewEmployeesGroupedByDepartment(startDate, endDate);
+        return employeeService.findNewEmployeesGroupedByDepartment(startDate, endDate);
     }
 
     @GetMapping("/count-active/{departmentId}")
     public Long countActiveEmployeesInDepartment(@PathVariable Long departmentId) {
-        return employeeRepository.countActiveEmployeesInDepartment(departmentId);
+        return employeeService.countActiveEmployeesInDepartment(departmentId);
     }
 
     @PostMapping("/add-employee/{departmentId}")
