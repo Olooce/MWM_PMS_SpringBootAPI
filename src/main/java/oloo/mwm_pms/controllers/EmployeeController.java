@@ -24,8 +24,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/new-by-department")
-    public  PagedModel<Employee> getNewEmployeesGroupedByDepartment(@RequestParam(defaultValue = LocalDate.now();) LocalDate startDate,
-                                                             @RequestParam LocalDate endDate) {
+    LocalDate current = LocalDate.now();
+    public  PagedModel<Employee> getNewEmployeesGroupedByDepartment(@RequestParam(defaultValue = current) LocalDate startDate,
+                                                             @RequestParam(defaultValue = current) LocalDate endDate) {
         return employeeService.getNewEmployeesGroupedByDepartment(startDate, endDate);
     }
 
