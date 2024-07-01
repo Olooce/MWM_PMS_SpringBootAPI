@@ -9,11 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilderFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ContactInfoService {
     private final ContactInfoRepository contactInfoRepository;
 
