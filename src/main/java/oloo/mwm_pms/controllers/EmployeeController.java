@@ -24,7 +24,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/new-by-department")
-    public List<Employee> getNewEmployeesGroupedByDepartment(@RequestParam LocalDate startDate,
+    public  PagedModel<Employee> getNewEmployeesGroupedByDepartment(@RequestParam LocalDate startDate,
                                                              @RequestParam LocalDate endDate) {
         return employeeService.getNewEmployeesGroupedByDepartment(startDate, endDate);
     }
