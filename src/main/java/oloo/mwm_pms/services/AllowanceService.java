@@ -3,10 +3,7 @@ package oloo.mwm_pms.services;
 
 import oloo.mwm_pms.controllers.AllowanceController;
 import oloo.mwm_pms.entinties.Allowance;
-
 import oloo.mwm_pms.repositories.AllowanceRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
