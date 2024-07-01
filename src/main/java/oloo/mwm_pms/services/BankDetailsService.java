@@ -9,8 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilderFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.util.List;
 
@@ -22,9 +21,8 @@ public class BankDetailsService {
         this.bankDetailsRepository = bankDetailsRepository;
     }
 
-    
-    public PagedModel<BankDetails> getAllBankDetails(@RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "10") int size) {
+
+    public PagedModel<BankDetails> getAllBankDetails(int page, int size) {
         List<BankDetails> bankDetailsList = bankDetailsRepository.findAll(page, size);
         int totalBankDetails = bankDetailsRepository.count();
         Pageable pageable = PageRequest.of(page, size);
