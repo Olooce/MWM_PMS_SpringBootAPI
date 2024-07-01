@@ -40,7 +40,7 @@ public class EmployeeRepository {
 //                new Object[]{startDate, endDate},
 //                new EmployeeRowMapper()
 //        );
-        return jdbcTemplate.query("CALL sp_new_employees_by_department()");
+        return jdbcTemplate.query( "CALL sp_new_employees_by_department()");
 //                new Object[]{startDate, endDate},
 //                new EmployeeRowMapper()
 //        );
