@@ -2,6 +2,7 @@ package oloo.mwm_pms.services;
 
 import oloo.mwm_pms.entinties.Employee;
 import oloo.mwm_pms.repositories.EmployeeRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class EmployeeService {
                                          int size) {
         List<Employee> employees = employeeRepository.findAll(page, size);
         int totalEmployees = employeeRepository.count();
+        Pageable pageable = PageRequest.of(page,size);
         return employeeRepository.findAll(page, size);
     }
 
