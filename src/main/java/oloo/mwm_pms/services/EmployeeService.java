@@ -15,8 +15,10 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public List<Employee> getAllEmployee( int page,
+    public PageModel<Employee> getAllEmployee( int page,
                                          int size) {
+        List<Employee> employees = employeeRepository.findAll(page, size);
+        int totalEmployees = employeeRepository.count();
         return employeeRepository.findAll(page, size);
     }
 
