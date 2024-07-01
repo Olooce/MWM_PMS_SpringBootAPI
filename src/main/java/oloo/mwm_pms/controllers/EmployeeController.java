@@ -17,6 +17,7 @@ public class EmployeeController {
         this.employeeRepository = employeeRepository;
     }
     @GetMapping
+    public List<Employee> getAllEmployees() {}
 
     @GetMapping("/new-by-department")
     public List<Employee> getNewEmployeesGroupedByDepartment(@RequestParam LocalDate startDate,
