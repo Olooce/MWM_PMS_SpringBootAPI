@@ -18,7 +18,7 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public PagedModel<Department> getDepartments(@RequestParam(defaultValue = "0") int page,
+    public PagedModel<Department> getAllDepartments(@RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "10") int size) {
         return departmentService.getAllDepartments(page, size);
     }
