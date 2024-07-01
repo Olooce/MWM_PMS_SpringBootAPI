@@ -6,7 +6,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/contactinfos")
+@RequestMapping("/contactinfo")
 public class ContactInfoController {
     public final ContactInfoService contactInfoService;
 
@@ -14,6 +14,7 @@ public class ContactInfoController {
         this.contactInfoService = contactInfoService;
     }
 
+    @GetMapping
     public PagedModel<ContactInfo> getAllContactInfos(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int size) {
         return contactInfoService.getAllContactInfos(page, size);
