@@ -1,6 +1,7 @@
 package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.entinties.Employee;
+import oloo.mwm_pms.entinties.Salary;
 import oloo.mwm_pms.repositories.EmployeeRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,10 @@ public class EmployeeController {
         this.employeeRepository = employeeRepository;
     }
     @GetMapping
-    public List<Employee> getAllEmployees() {}
+    public List<Employee> getAllEmployee(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size) {
+        return employeeRepository.findAll(page, size);
+    }
 
     @GetMapping("/new-by-department")
     public List<Employee> getNewEmployeesGroupedByDepartment(@RequestParam LocalDate startDate,
