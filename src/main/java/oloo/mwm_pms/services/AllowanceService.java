@@ -30,7 +30,7 @@ public class AllowanceService {
         PageImpl<Allowance> allowancePage = new PageImpl<>(allowances, pageable, totalAllowances);
 
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, totalAllowances);
-        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AllowanceController.class).getAllAllowances(page, size));
+        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AllowanceService.class).getAllAllowances(page, size));
         return PagedModel.of(allowances, pageMetadata, linkBuilder.withSelfRel());
     }
 }
