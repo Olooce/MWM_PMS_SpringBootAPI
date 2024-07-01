@@ -1,8 +1,12 @@
 package oloo.mwm_pms.services;
 
+import oloo.mwm_pms.controllers.EmployeeController;
 import oloo.mwm_pms.entinties.Employee;
 import oloo.mwm_pms.repositories.EmployeeRepository;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,12 +20,15 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public PageModel<Employee> getAllEmployee( int page,
+    public PagedModel<Employee> getAllEmployee( int page,
                                          int size) {
         List<Employee> employees = employeeRepository.findAll(page, size);
         int totalEmployees = employeeRepository.count();
         Pageable pageable = PageRequest.of(page,size);
-        return employeeRepository.findAll(page, size);
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(page, size, totalEmployees);
+        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getAllEmployee(page,size));
+        return PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
     }
 
 
