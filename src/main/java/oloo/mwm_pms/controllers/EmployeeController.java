@@ -34,7 +34,7 @@ public class EmployeeController {
             //endDate = LocalDate.now().minusDays(1);
             endDate = LocalDate.now();
         }
-        
+
         return employeeService.getNewEmployeesGroupedByDepartment(startDate, endDate);
     }
 
