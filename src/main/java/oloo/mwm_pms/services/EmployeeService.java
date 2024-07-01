@@ -32,8 +32,9 @@ public class EmployeeService {
     }
 
 
-    public List<Employee> getNewEmployeesGroupedByDepartment( LocalDate startDate,
+    public PagedModel<Employee> getNewEmployeesGroupedByDepartment( LocalDate startDate,
                                                               LocalDate endDate) {
+        List<Employee> employees = employeeRepository.findNewEmployeesGroupedByDepartment(startDate, endDate);
         return employeeRepository.findNewEmployeesGroupedByDepartment(startDate, endDate);
     }
 
