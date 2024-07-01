@@ -25,7 +25,7 @@ public class EmployeeController {
     @GetMapping("/new-by-department")
     public List<Employee> getNewEmployeesGroupedByDepartment(@RequestParam LocalDate startDate,
                                                              @RequestParam LocalDate endDate) {
-        return employeeService.findNewEmployeesGroupedByDepartment(startDate, endDate);
+        return employeeService.getNewEmployeesGroupedByDepartment(startDate, endDate);
     }
 
     @GetMapping("/count-active/{departmentId}")
