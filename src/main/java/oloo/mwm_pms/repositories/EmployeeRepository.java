@@ -34,11 +34,15 @@ public class EmployeeRepository {
     }
 
     public List<Employee> findNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate) {
-        return jdbcTemplate.query("SELECT MAX(employee_id), MAX(name), MAX(dob), MAX(gender),"
-                + "MAX(gender), MAX(department_id), MAX(employment_type), MAX(employment_date), MAX(status), " +
-                        "MAX(status_description) FROM employees WHERE date_created BETWEEN ? AND ? GROUP BY department_id",
-                new Object[]{startDate, endDate},
-                new EmployeeRowMapper()
+//        return jdbcTemplate.query("SELECT MAX(employee_id), MAX(name), MAX(dob), MAX(gender),"
+//                + "MAX(gender), MAX(department_id), MAX(employment_type), MAX(employment_date), MAX(status), " +
+//                        "MAX(status_description) FROM employees WHERE date_created BETWEEN ? AND ? GROUP BY department_id",
+//                new Object[]{startDate, endDate},
+//                new EmployeeRowMapper()
+//        );
+        return jdbcTemplate.query("CALL sp_new_employees_by_department()")
+//                new Object[]{startDate, endDate},
+//                new EmployeeRowMapper()
         );
     }
 
