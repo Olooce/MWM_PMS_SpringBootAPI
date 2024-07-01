@@ -3,11 +3,13 @@ package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.entinties.Allowance;
 import oloo.mwm_pms.services.AllowanceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/allowances")
+
 public class AllowanceController {
     private final AllowanceService allowanceService;
     public AllowanceController(AllowanceService allowanceService) {
