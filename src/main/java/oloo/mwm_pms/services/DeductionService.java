@@ -9,10 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilderFactory;
+import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 
+@Service
 public class DeductionService {
     private final DeductionRepository deductionRepository;
 
