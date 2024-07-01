@@ -16,23 +16,5 @@ import java.util.List;
 @RequestMapping("/contactinfos")
 public class ContactInfoController {
 
-    private final ContactInfoRepository contactInfoRepository;
 
-    public ContactInfoController(ContactInfoRepository contactInfoRepository) {
-        this.contactInfoRepository = contactInfoRepository;
-    }
-
-    @GetMapping
-    public PagedModel<ContactInfo> getAllContactInfos(@RequestParam(defaultValue = "0") int page,
-                                                      @RequestParam(defaultValue = "10") int size) {
-        List<ContactInfo> contactInfos = contactInfoRepository.findAll(page, size);
-        int totalContactInfos = contactInfoRepository.count();
-        Pageable pageable = PageRequest.of(page, size);
-        PageImpl<ContactInfo> contactInfoPage = new PageImpl<>(contactInfos, pageable, totalContactInfos);
-
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, totalContactInfos);
-        WebMvcLinkBuilderFactory factory = new WebMvcLinkBuilderFactory();
-        WebMvcLinkBuilder linkBuilder = factory.linkTo(WebMvcLinkBuilder.methodOn(ContactInfoController.class).getAllContactInfos(page, size));
-        return PagedModel.of(contactInfos, pageMetadata, linkBuilder.withSelfRel());
-    }
 }
