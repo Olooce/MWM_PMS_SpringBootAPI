@@ -35,8 +35,6 @@ public class SystemUserController {
 
         // If user not found or password doesn't match, return unsuccessful authentication status
         if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
-            System.out.println((user == null));
-            System.out.println(systemUserService.checkPassword(password, user.getPassword()));
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
