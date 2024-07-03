@@ -18,22 +18,16 @@ import java.util.List;
 public class SystemUserController {
 
     private final SystemUserService systemUserService;
+    private final SystemUserRepository systemUserRepository;
 
-    public SystemUserController(SystemUserService systemUserService) {
+    public SystemUserController(SystemUserService systemUserService, SystemUserRepository systemUserRepository) {
         this.systemUserService  = systemUserService;
+        this.systemUserRepository = systemUserRepository;
     }
 
     @GetMapping
     public PagedModel<SystemUser> getAllSystemUsers(@RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size) {
-        List<SystemUser> systemUsers = systemUserRepository.findAll(page, size);
-        int totalSystemUsers = systemUserRepository.count();
-        Pageable pageable = PageRequest.of(page, size);
-        PageImpl<SystemUser> systemUserPage = new PageImpl<>(systemUsers, pageable, totalSystemUsers);
-
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, totalSystemUsers);
-        WebMvcLinkBuilderFactory factory = new WebMvcLinkBuilderFactory();
-        WebMvcLinkBuilder linkBuilder = factory.linkTo(WebMvcLinkBuilder.methodOn(SystemUserController.class).getAllSystemUsers(page, size));
-        return PagedModel.of(systemUsers, pageMetadata, linkBuilder.withSelfRel());
+       return systemUserService.getAllSystemUsers(page, size);
     }
 }
