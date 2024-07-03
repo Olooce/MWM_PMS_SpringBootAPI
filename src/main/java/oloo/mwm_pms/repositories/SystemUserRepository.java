@@ -33,6 +33,10 @@ public class SystemUserRepository {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM system_users", Integer.class);
     }
 
+    public SystemUser findByUsername(String username) {
+        return jdbcTemplate.queryForObject("SELECT * FROM  system_users WHERE",)
+    }
+
     private static class SystemUserRowMapper implements RowMapper<SystemUser> {
         @Override
         public SystemUser mapRow(ResultSet rs, int rowNum) throws SQLException {
