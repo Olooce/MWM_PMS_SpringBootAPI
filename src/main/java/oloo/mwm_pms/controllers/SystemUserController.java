@@ -24,7 +24,11 @@ public class SystemUserController {
        return systemUserService.getAllSystemUsers(page, size);
     }
     @PostMapping("/auth")
-    public ResponseEntity<String> authenticateUser(@RequestBody String username, @RequestParam String password) {
+    public ResponseEntity<String> authenticateUser(@RequestBody AuthRequest authRequest) {
+        // Extract username and password from the AuthRequest object
+        String username = authRequest.getUsername();
+        String password = authRequest.getPassword();
+
         // Find the user by username
         SystemUser user = systemUserService.findByUsername(username);
 
@@ -36,5 +40,6 @@ public class SystemUserController {
         // Return successful authentication status
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
 }
