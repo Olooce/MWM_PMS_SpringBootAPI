@@ -26,7 +26,7 @@ public class SystemUserController {
     @GetMapping("/auth")
     public ResponseEntity<String> authenticateUser(@RequestParam String username, @RequestParam String password) {
         // Find the user by username
-        SystemUser user = SystemUserService.findByUsername(username);
+        SystemUser user = systemUserService.findByUsername(username);
 
         // If user not found or password doesn't match, return unsuccessful authentication status
         if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
