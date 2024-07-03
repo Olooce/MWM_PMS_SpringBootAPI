@@ -33,7 +33,7 @@ public class EmployeeService {
 
 
     public PagedModel<Employee> getNewEmployeesGroupedByDepartment( LocalDate startDate,
-                                                              LocalDate endDate) {
+                                                              LocalDate endDate, int page, int size) {
         List<Employee> employees = employeeRepository.findNewEmployeesGroupedByDepartment(startDate, endDate);
 
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(employees.size(), employees.size(), employees.size());

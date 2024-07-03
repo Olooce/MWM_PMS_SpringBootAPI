@@ -38,7 +38,7 @@ public class EmployeeController {
             endDate = LocalDate.now();
         }
 
-        return employeeService.getNewEmployeesGroupedByDepartment(startDate, endDate);
+        return employeeService.getNewEmployeesGroupedByDepartment(startDate, endDate, page, size);
     }
 
     @GetMapping("/count-active/{departmentId}")
