@@ -1,6 +1,5 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.repositories.SalaryRepository;
 import oloo.mwm_pms.entinties.Salary;
 import oloo.mwm_pms.services.SalaryService;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ public class SalaryController {
 
     private final SalaryService salaryService;
 
-    public SalaryController(SalaryService salaryService {
+    public SalaryController(SalaryService salaryService) {
         this.salaryService = salaryService;
     }
 
@@ -42,12 +41,12 @@ public class SalaryController {
     @GetMapping
     public List<Salary> getAllSalaries(@RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size) {
-        return salaryService.findAll(page, size);
+        return salaryService.getAllSalaries(page, size);
     }
 
     @GetMapping("/count")
     public int countSalaries() {
-        return salaryService.count();
+        return salaryService.countSalaries();
     }
 
 }
