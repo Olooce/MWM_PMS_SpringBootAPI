@@ -44,7 +44,7 @@ public class SystemUserService {
 
     public boolean checkPassword(String rawPassword, String hashedPassword) {
 //        String hashedRawPassword = DigestUtils.sha256Hex(rawPassword);
-        String hashedRawpassword = rawPassword;
+        String hashedRawPassword= rawPassword;
         return hashedRawPassword.equals(hashedPassword);
     }
 }
