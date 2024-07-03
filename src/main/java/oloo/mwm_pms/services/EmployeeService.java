@@ -37,7 +37,7 @@ public class EmployeeService {
         List<Employee> employees = employeeRepository.findNewEmployeesGroupedByDepartment(startDate, endDate, page, size);
 
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, employees.size());
-        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getNewEmployeesGroupedByDepartment(startDate,endDate));
+        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getNewEmployeesGroupedByDepartment(startDate,endDate, page, size));
         return PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
     }
 
