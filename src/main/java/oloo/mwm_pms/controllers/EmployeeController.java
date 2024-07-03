@@ -26,7 +26,10 @@ public class EmployeeController {
     @GetMapping("/new-by-department")
     public PagedModel<Employee> getNewEmployeesGroupedByDepartment(
             @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate) {
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        
         if (startDate == null) {
             startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
         }
