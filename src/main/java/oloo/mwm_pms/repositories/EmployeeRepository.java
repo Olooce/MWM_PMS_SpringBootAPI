@@ -53,6 +53,13 @@ public class EmployeeRepository {
         );
     }
 
+    public Long countNewEmployeesInDepartment(long departmentId) {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM employees WHERE department_id = ? AND status= 'NEW'",
+                new Object[]{departmentId},
+                Long.class
+        );
+    }
+
     private static class EmployeeRowMapper implements RowMapper<Employee> {
         @Override
         public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {
