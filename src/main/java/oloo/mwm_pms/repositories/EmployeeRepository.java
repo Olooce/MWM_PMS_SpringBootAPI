@@ -33,7 +33,7 @@ public class EmployeeRepository {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM employees", Integer.class);
     }
 
-    public List<Employee> findNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate) {
+    public List<Employee> findNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate, int page, int size) {
 //        return jdbcTemplate.query("SELECT MAX(employee_id), MAX(name), MAX(dob), MAX(gender),"
 //                + "MAX(gender), MAX(department_id), MAX(employment_type), MAX(employment_date), MAX(status), " +
 //                        "MAX(status_description) FROM employees WHERE date_created BETWEEN ? AND ? GROUP BY department_id",
