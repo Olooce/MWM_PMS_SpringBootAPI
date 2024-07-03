@@ -2,6 +2,7 @@ package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.repositories.SalaryRepository;
 import oloo.mwm_pms.entinties.Salary;
+import oloo.mwm_pms.services.SalaryService;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -12,15 +13,15 @@ import java.util.Map;
 @RequestMapping("/salaries")
 public class SalaryController {
 
-    private final SalaryRepository salaryRepository;
+    private final SalaryService salaryService;
 
-    public SalaryController(SalaryRepository salaryRepository) {
-        this.salaryRepository = salaryRepository;
+    public SalaryController(SalaryService salaryService {
+        this.salaryService = salaryService;
     }
 
     @GetMapping("/earnings-deductions/{employeeId}")
     public Map<String, Object> getEarningsAndDeductionsByEmployee(@PathVariable Long employeeId) {
-        return salaryRepository.getEarningsAndDeductionsByEmployee(employeeId);
+        return salaryService.getEarningsAndDeductionsByEmployee(employeeId);
     }
 
     @GetMapping("/allowances-net-salaries/{departmentId}")

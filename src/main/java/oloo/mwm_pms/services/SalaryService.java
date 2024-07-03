@@ -22,7 +22,7 @@ public class SalaryService {
     }
 
 
-    public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment(@PathVariable Long departmentId) {
+    public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment( Long departmentId) {
         return salaryRepository.getTotalAllowancesAndNetSalariesByDepartment(departmentId);
     }
 
@@ -32,13 +32,13 @@ public class SalaryService {
     }
 
 
-    public List<Map<String, Object>> getPaymentHistoryByEmployee(@PathVariable Long employeeId) {
+    public List<Map<String, Object>> getPaymentHistoryByEmployee( Long employeeId) {
         return salaryRepository.getPaymentHistoryByEmployee(employeeId);
     }
 
 
-    public List<Salary> getAllSalaries(@RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "10") int size) {
+    public List<Salary> getAllSalaries(int page,
+                                       int size) {
         return salaryRepository.findAll(page, size);
     }
 
