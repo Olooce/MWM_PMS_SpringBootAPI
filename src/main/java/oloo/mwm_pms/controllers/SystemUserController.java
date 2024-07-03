@@ -23,7 +23,7 @@ public class SystemUserController {
                                                     @RequestParam(defaultValue = "10") int size) {
        return systemUserService.getAllSystemUsers(page, size);
     }
-    @GetMapping("/auth")
+    @PostMapping("/auth")
     public ResponseEntity<String> authenticateUser(@RequestParam String username, @RequestParam String password) {
         // Find the user by username
         SystemUser user = systemUserService.findByUsername(username);
