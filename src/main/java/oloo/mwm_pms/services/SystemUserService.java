@@ -37,7 +37,7 @@ public class SystemUserService {
     }
 
 
-    public SystemUser findByUsername(String username) {
+    public static SystemUser findByUsername(String username) {
         return systemUserRepository.findByUsername(username);
     }
 }
