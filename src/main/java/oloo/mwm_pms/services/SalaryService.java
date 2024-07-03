@@ -1,6 +1,7 @@
 package oloo.mwm_pms.services;
 
 import oloo.mwm_pms.entinties.Salary;
+import oloo.mwm_pms.repositories.SalaryRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,8 +12,8 @@ import java.util.Map;
 public class SalaryService {
     private final SalaryRepository salaryRepository;
 
-    public SalaryController(SalaryService salaryService {
-        this.salaryRepository = salaryService;
+    public SalaryService(SalaryRepository salaryRepository) {
+        this.salaryRepository = salaryRepository;
     }
 
 
