@@ -35,4 +35,9 @@ public class SystemUserService {
         WebMvcLinkBuilder linkBuilder = factory.linkTo(WebMvcLinkBuilder.methodOn(SystemUserController.class).getAllSystemUsers(page, size));
         return PagedModel.of(systemUsers, pageMetadata, linkBuilder.withSelfRel());
     }
+
+
+    public SystemUser findByUsername(String username) {
+        return systemUserRepository.findByUsername(username);
+    }
 }
