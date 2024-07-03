@@ -2,6 +2,7 @@ package oloo.mwm_pms.services;
 
 import oloo.mwm_pms.entinties.Salary;
 import oloo.mwm_pms.repositories.SalaryRepository;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -37,8 +38,8 @@ public class SalaryService {
     }
 
 
-    public List<Salary> getAllSalaries(int page,
-                                       int size) {
+    public PagedModel<Salary> getAllSalaries(int page,
+                                             int size) {
         return salaryRepository.findAll(page, size);
     }
 
