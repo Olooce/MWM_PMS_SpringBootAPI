@@ -24,7 +24,7 @@ public class SystemUserController {
        return systemUserService.getAllSystemUsers(page, size);
     }
     @PostMapping("/auth")
-    public ResponseEntity<String> authenticateUser(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<String> authenticateUser(@RequestBody String username, @RequestBody String password) {
         // Find the user by username
         SystemUser user = systemUserService.findByUsername(username);
 
