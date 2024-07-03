@@ -26,28 +26,28 @@ public class SalaryController {
 
     @GetMapping("/allowances-net-salaries/{departmentId}")
     public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment(@PathVariable Long departmentId) {
-        return salaryRepository.getTotalAllowancesAndNetSalariesByDepartment(departmentId);
+        return salaryService.getTotalAllowancesAndNetSalariesByDepartment(departmentId);
     }
 
     @GetMapping("/total-net-salary")
     public BigDecimal getTotalNetSalaryToPay() {
-        return salaryRepository.getTotalNetSalaryToPay();
+        return salaryService.getTotalNetSalaryToPay();
     }
 
     @GetMapping("/payment-history/{employeeId}")
     public List<Map<String, Object>> getPaymentHistoryByEmployee(@PathVariable Long employeeId) {
-        return salaryRepository.getPaymentHistoryByEmployee(employeeId);
+        return salaryService.getPaymentHistoryByEmployee(employeeId);
     }
 
     @GetMapping
     public List<Salary> getAllSalaries(@RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size) {
-        return salaryRepository.findAll(page, size);
+        return salaryService.findAll(page, size);
     }
 
     @GetMapping("/count")
     public int countSalaries() {
-        return salaryRepository.count();
+        return salaryService.count();
     }
 
 }
