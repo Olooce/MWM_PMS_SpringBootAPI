@@ -34,7 +34,7 @@ public class SystemUserRepository {
     }
 
     public SystemUser findByUsername(String username) {
-        return jdbcTemplate.queryForObject("SELECT * FROM  system_users WHERE username = ? LIMIT 1",)
+        return jdbcTemplate.queryForObject("SELECT * FROM  system_users WHERE username = ? LIMIT 1", new SystemUserRowMapper(), username);
     }
 
     private static class SystemUserRowMapper implements RowMapper<SystemUser> {
