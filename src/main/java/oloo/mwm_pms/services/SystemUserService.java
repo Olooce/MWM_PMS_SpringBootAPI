@@ -37,7 +37,12 @@ public class SystemUserService {
     }
 
 
-    public static SystemUser findByUsername(String username) {
+    public SystemUser findByUsername(String username) {
         return systemUserRepository.findByUsername(username);
+    }
+
+    public boolean checkPassword(String rawPassword, String hashedPassword) {
+        String hashedRawPassword = DigestUtils.sha256Hex(rawPassword);
+        return hashedRawPassword.equals(hashedPassword);
     }
 }

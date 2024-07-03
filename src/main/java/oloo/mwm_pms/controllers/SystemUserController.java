@@ -29,7 +29,7 @@ public class SystemUserController {
         SystemUser user = SystemUserService.findByUsername(username);
 
         // If user not found or password doesn't match, return unsuccessful authentication status
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+        if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
             return new ResponseEntity<>( HttpStatus.UNAUTHORIZED);
         }
 
