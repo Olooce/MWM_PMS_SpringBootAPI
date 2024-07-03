@@ -26,7 +26,7 @@ public class EmployeeService {
         int totalEmployees = employeeRepository.count();
         Pageable pageable = PageRequest.of(page,size);
 
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(page, size, totalEmployees);
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size,page, totalEmployees);
         WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getAllEmployee(page,size));
         return PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
     }
