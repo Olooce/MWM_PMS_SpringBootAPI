@@ -6,7 +6,7 @@ import oloo.mwm_pms.entinties.PasswordStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.apache.commons.codec.digest.DigestUtils;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
