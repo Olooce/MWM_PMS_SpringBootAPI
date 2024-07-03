@@ -18,11 +18,10 @@ import java.util.List;
 public class SystemUserController {
 
     private final SystemUserService systemUserService;
-    private final SystemUserRepository systemUserRepository;
 
-    public SystemUserController(SystemUserService systemUserService, SystemUserRepository systemUserRepository) {
+    public SystemUserController(SystemUserService systemUserService) {
         this.systemUserService  = systemUserService;
-        this.systemUserRepository = systemUserRepository;
+
     }
 
     @GetMapping
