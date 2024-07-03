@@ -46,6 +46,10 @@ public class EmployeeService {
         return employeeRepository.countActiveEmployeesInDepartment(departmentId);
     }
 
+    public  Long countNewEmployeesInDepartment(long departmentId){
+        return employeeRepository.countNewEmployeesInDepartment(departmentId);
+    }
+
     public long addNewEmployee(long departmentId){
         Employee employee = new Employee();
         employee.setDepartmentId(departmentId);
