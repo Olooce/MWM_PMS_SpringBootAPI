@@ -2,6 +2,7 @@ package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.entinties.SystemUser;
 import oloo.mwm_pms.repositories.SystemUserRepository;
+import oloo.mwm_pms.services.SystemUserService;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +17,10 @@ import java.util.List;
 @RequestMapping("/systemusers")
 public class SystemUserController {
 
-    private final SystemUserRepository systemUserRepository;
+    private final SystemUserService systemUserService;
 
-    public SystemUserController(SystemUserRepository systemUserRepository) {
-        this.systemUserRepository = systemUserRepository;
+    public SystemUserController(SystemUserService systemUserService) {
+        this.systemUserService  = systemUserService;
     }
 
     @GetMapping
