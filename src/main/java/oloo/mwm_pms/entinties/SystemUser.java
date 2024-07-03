@@ -38,7 +38,7 @@ public class SystemUser {
         return userStatusDescription;
     }
 
-    public String getPwd() {
+    public String getPassword() {
         return pwd;
     }
 

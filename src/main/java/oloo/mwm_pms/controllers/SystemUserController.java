@@ -30,11 +30,11 @@ public class SystemUserController {
 
         // If user not found or password doesn't match, return unsuccessful authentication status
         if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
-            return new ResponseEntity<>( HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         // Return successful authentication status
-        return new ResponseEntity<>( HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
