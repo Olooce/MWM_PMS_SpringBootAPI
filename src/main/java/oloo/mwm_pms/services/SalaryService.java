@@ -5,11 +5,11 @@ import oloo.mwm_pms.controllers.SalaryController;
 import oloo.mwm_pms.entinties.Salary;
 import oloo.mwm_pms.repositories.SalaryRepository;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
