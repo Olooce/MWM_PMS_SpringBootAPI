@@ -23,6 +23,11 @@ public class SystemUserController {
     }
 
     @GetMapping("/auth")
-    public
+    public autheticateUser(@RequestParam String username, @RequestParam String password){
+        //hashpassword
+        //check if usernname and password entry exist in the system_users table
+        //if existss return succesfull authentiactionstatus
+        //if not return unsecess autheticationsatauts
+    }
 
 }
