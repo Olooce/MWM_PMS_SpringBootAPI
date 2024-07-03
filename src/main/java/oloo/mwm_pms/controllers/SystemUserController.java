@@ -21,4 +21,8 @@ public class SystemUserController {
                                                     @RequestParam(defaultValue = "10") int size) {
        return systemUserService.getAllSystemUsers(page, size);
     }
+
+    @GetMapping("/auth")
+    public
+
 }
