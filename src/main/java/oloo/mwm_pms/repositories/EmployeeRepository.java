@@ -23,7 +23,7 @@ public class EmployeeRepository {
 
     public List<Employee> findAll(int page, int size) {
         int offset = page * size;
-        return jdbcTemplate.query("SELECT * FROM employees LIMIT ? OFFSET ?",
+        return jdbcTemplate.query("SELECT * FROM employees ORDER BY employee_id LIMIT ? OFFSET ? ",
                 new Object[]{size, offset},
                 new EmployeeRowMapper()
         );
