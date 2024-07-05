@@ -26,7 +26,8 @@ public class EmployeeService {
     public PagedModel<Employee> getAllEmployee( int page,
                                          int size) {
         List<Employee> employees = employeeRepository.findAll(page, size);
-        int totalEmployees = employeeRepository.count();
+        int totalEmployees =0;
+//        int totalEmployees = employeeRepository.count();
         Pageable pageable = PageRequest.of(page,size);
 
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size,page, totalEmployees);
