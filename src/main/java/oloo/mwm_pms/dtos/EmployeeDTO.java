@@ -2,7 +2,7 @@ package oloo.mwm_pms.dtos;
 
 import java.time.LocalDate;
 
-public class AddEmployee {
+public class EmployeeDTO {
     private String name;
     private LocalDate dob;
     private String gender;
@@ -27,5 +27,25 @@ public class AddEmployee {
 
     public Long getDepartmentId() {
         return departmentId;
+    }
+
+    public String getEmploymentType() {
+        return employmentType;
+    }
+
+    public LocalDate getEmploymentDate() {
+        return employmentDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getStatusDescription() {
+        return statusDescription;
+    }
+
+    public LocalDate getTerminationDate() {
+        return terminationDate;
     }
 }

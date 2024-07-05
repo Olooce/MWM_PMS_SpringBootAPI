@@ -60,6 +60,30 @@ public class EmployeeRepository {
         );
     }
 
+    public Employee addEmployee(Employee employee) {
+        String sql = "INSERT INTO employees (name, dob, gender, department_id, employment_type, employment_date, status, status_description, termination_date, date_created, date_modified) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+                employee.getName(),
+                employee.getDob(),
+                employee.getGender(),
+                employee.getDepartmentId(),
+                employee.getEmploymentType().name(),
+                employee.getEmploymentDate(),
+                employee.getStatus().name(),
+                employee.getStatusDescription(),
+                employee.getTerminationDate(),
+                employee.getDateCreated(),
+                employee.getDateModified()
+        );
+
+        Long generatedId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        employee.setEmployeeId(generatedId);
+
+        return employee;
+    }
+
     private static class EmployeeRowMapper implements RowMapper<Employee> {
         @Override
         public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -1,12 +1,13 @@
 package oloo.mwm_pms.controllers;
 
+import oloo.mwm_pms.dtos.EmployeeDTO;
 import oloo.mwm_pms.entinties.Employee;
 import oloo.mwm_pms.services.EmployeeService;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/employees")
@@ -46,8 +47,8 @@ public class EmployeeController {
         return employeeService.countActiveEmployeesInDepartment(departmentId);
     }
 
-//    @PostMapping("/add-employee/")
-//    public long addNewEmployee(@Requestbody ){
-//
-//    }
+    @PostMapping("/add-employee")
+    public Employee addNewEmployee(@RequestBody EmployeeDTO employeeDto) {
+        return employeeService.addNewEmployee(employeeDto);
+    }
 }
