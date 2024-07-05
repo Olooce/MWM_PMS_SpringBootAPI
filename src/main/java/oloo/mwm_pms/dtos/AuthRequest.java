@@ -1,4 +1,4 @@
-package oloo.mwm_pms.entinties.pojos;
+package oloo.mwm_pms.dtos;
 
 public class AuthRequest {
     private String username;

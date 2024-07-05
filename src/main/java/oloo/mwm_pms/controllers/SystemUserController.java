@@ -1,7 +1,7 @@
 package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.entinties.SystemUser;
-import oloo.mwm_pms.entinties.pojos.AuthRequest;
+import oloo.mwm_pms.dtos.AuthRequest;
 import oloo.mwm_pms.services.SystemUserService;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;

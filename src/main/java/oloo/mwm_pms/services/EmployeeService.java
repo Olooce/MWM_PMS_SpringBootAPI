@@ -1,6 +1,7 @@
 package oloo.mwm_pms.services;
 
 import oloo.mwm_pms.controllers.EmployeeController;
+import oloo.mwm_pms.dtos.AddEmployee;
 import oloo.mwm_pms.entinties.Employee;
 import oloo.mwm_pms.repositories.EmployeeRepository;
 import org.springframework.data.domain.PageRequest;
@@ -50,10 +51,18 @@ public class EmployeeService {
         return employeeRepository.countNewEmployeesInDepartment(departmentId);
     }
 
-    public long addNewEmployee(long departmentId){
+    public Employee addNewEmployee(AddEmployee employeeDto) {
         Employee employee = new Employee();
-        employee.setDepartmentId(departmentId);
+        employee.setName(employeeDto.getName());
+        employee.setDob(employeeDto.getDob());
+        employee.setGender(employeeDto.getGender());
+        employee.setDepartmentId(employeeDto.getDepartmentId());
+        employee.setEmploymentType(Employee.EmploymentType.valueOf(employeeDto.getEmploymentType()));
+        employee.setEmploymentDate(employeeDto.getEmploymentDate());
+        employee.setStatus(Employee.Status.valueOf(employeeDto.getStatus()));
+        employee.setStatusDescription(employeeDto.getStatusDescription());
+        employee.setTerminationDate(employeeDto.getTerminationDate());
 
-        return departmentId;
+        return employeeRepository.save(employee);
     }
 }
