@@ -6,8 +6,6 @@ import oloo.mwm_pms.entinties.Employee;
 import oloo.mwm_pms.entinties.EmploymentType;
 import oloo.mwm_pms.entinties.EmployeeStatus;
 import oloo.mwm_pms.repositories.EmployeeRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
@@ -24,36 +22,68 @@ public class EmployeeService {
     }
 
     public PagedModel<Employee> getAllEmployee(int page, int size) {
+        // Fetch employees
         List<Employee> employees = employeeRepository.findAll(page, size);
 
         if (employees == null || employees.isEmpty()) {
             return null;
         }
 
-        Pageable pageable = PageRequest.of(page, size);
+        // Check if there are more employees than the page size to determine if there is a next page
+        boolean hasNext = employees.size() > size;
+        if (hasNext) {
+            employees = employees.subList(0, size);
+        }
 
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, employees.size());
         WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getAllEmployee(page, size));
-        return PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
+        PagedModel<Employee> pagedModel = PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
+
+        // Add links for next and previous pages, if applicable
+        if (page > 0) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page - 1) + "&size=" + size).withRel("prev"));
+        }
+        if (hasNext) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page + 1) + "&size=" + size).withRel("next"));
+        }
+
+        return pagedModel;
     }
 
-
-
-    public PagedModel<Employee> getNewEmployeesGroupedByDepartment( LocalDate startDate,
-                                                              LocalDate endDate, int page, int size) {
+    public PagedModel<Employee> getNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate, int page, int size) {
+        // Fetch new employees grouped by department
         List<Employee> employees = employeeRepository.findNewEmployeesGroupedByDepartment(startDate, endDate, page, size);
 
+        if (employees == null || employees.isEmpty()) {
+            return null;
+        }
+
+        // Check if there are more employees than the page size to determine if there is a next page
+        boolean hasNext = employees.size() > size;
+        if (hasNext) {
+            employees = employees.subList(0, size);
+        }
+
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, employees.size());
-        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getNewEmployeesGroupedByDepartment(startDate,endDate, page, size));
-        return PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
+        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getNewEmployeesGroupedByDepartment(startDate, endDate, page, size));
+        PagedModel<Employee> pagedModel = PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
+
+        // Add links for next and previous pages, if applicable
+        if (page > 0) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page - 1) + "&size=" + size).withRel("prev"));
+        }
+        if (hasNext) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page + 1) + "&size=" + size).withRel("next"));
+        }
+
+        return pagedModel;
     }
 
-
-    public Long countActiveEmployeesInDepartment( Long departmentId) {
+    public Long countActiveEmployeesInDepartment(Long departmentId) {
         return employeeRepository.countActiveEmployeesInDepartment(departmentId);
     }
 
-    public  Long countNewEmployeesInDepartment(long departmentId){
+    public Long countNewEmployeesInDepartment(long departmentId) {
         return employeeRepository.countNewEmployeesInDepartment(departmentId);
     }
 

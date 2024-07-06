@@ -1,11 +1,8 @@
 package oloo.mwm_pms.services;
 
-import oloo.mwm_pms.controllers.AllowanceController;
 import oloo.mwm_pms.controllers.SalaryController;
 import oloo.mwm_pms.entinties.Salary;
 import oloo.mwm_pms.repositories.SalaryRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
@@ -22,36 +19,49 @@ public class SalaryService {
         this.salaryRepository = salaryRepository;
     }
 
+    public PagedModel<Salary> getAllSalaries(int page, int size) {
+        // Fetch one extra record to determine if there are more pages
+        List<Salary> salaries = salaryRepository.findAll(page, size + 1);
 
-    public Map<String, Object> getEarningsAndDeductionsByEmployee( Long employeeId) {
+        if (salaries == null || salaries.isEmpty()) {
+            return null;
+        }
+
+        // Check if there is a next page
+        boolean hasNext = salaries.size() > size;
+        if (hasNext) {
+            salaries = salaries.subList(0, size);
+        }
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, salaries.size());
+        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SalaryController.class).getAllSalaries(page, size));
+        PagedModel<Salary> pagedModel = PagedModel.of(salaries, pageMetadata, linkBuilder.withSelfRel());
+
+        // Add links for next and previous pages, if applicable
+        if (page > 0) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page - 1) + "&size=" + size).withRel("prev"));
+        }
+        if (hasNext) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page + 1) + "&size=" + size).withRel("next"));
+        }
+
+        return pagedModel;
+    }
+
+    public Map<String, Object> getEarningsAndDeductionsByEmployee(Long employeeId) {
         return salaryRepository.getEarningsAndDeductionsByEmployee(employeeId);
     }
 
-
-    public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment( Long departmentId) {
+    public List<Map<String, BigDecimal>> getTotalAllowancesAndNetSalariesByDepartment(Long departmentId) {
         return salaryRepository.getTotalAllowancesAndNetSalariesByDepartment(departmentId);
     }
-
 
     public BigDecimal getTotalNetSalaryToPay() {
         return salaryRepository.getTotalNetSalaryToPay();
     }
 
-
-    public List<Map<String, Object>> getPaymentHistoryByEmployee( Long employeeId) {
+    public List<Map<String, Object>> getPaymentHistoryByEmployee(Long employeeId) {
         return salaryRepository.getPaymentHistoryByEmployee(employeeId);
-    }
-
-
-    public PagedModel<Salary> getAllSalaries(int page,
-                                             int size) {
-        List<Salary>  salaries = salaryRepository.findAll(page, size);
-        int salaryCount = salaryRepository.count();
-        Pageable pageable = PageRequest.of(page, size);
-
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, salaryCount);
-        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SalaryController.class).getAllSalaries(page, size));
-        return PagedModel.of(salaries, pageMetadata, linkBuilder.withSelfRel());
     }
 
     public int countSalaries() {

@@ -3,14 +3,10 @@ package oloo.mwm_pms.services;
 import oloo.mwm_pms.controllers.DepartmentController;
 import oloo.mwm_pms.entinties.Department;
 import oloo.mwm_pms.repositories.DepartmentRepository;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilderFactory;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 
@@ -23,14 +19,32 @@ public class DepartmentService {
     }
 
     public PagedModel<Department> getAllDepartments(int page, int size) {
-        List<Department> departments = departmentRepository.findAll(page, size);
-        int totalDepartments = departmentRepository.count();
-        Pageable pageable = PageRequest.of(page, size);
-        PageImpl<Department> departmentPage = new PageImpl<>(departments, pageable, totalDepartments);
+        // Fetch one extra record to determine if there are more pages
+        List<Department> departments = departmentRepository.findAll(page, size + 1);
 
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, totalDepartments);
+        if (departments == null || departments.isEmpty()) {
+            return null;
+        }
+
+        // Check if there is a next page
+        boolean hasNext = departments.size() > size;
+        if (hasNext) {
+            departments = departments.subList(0, size);
+        }
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, departments.size());
         WebMvcLinkBuilderFactory factory = new WebMvcLinkBuilderFactory();
         WebMvcLinkBuilder linkBuilder = factory.linkTo(WebMvcLinkBuilder.methodOn(DepartmentController.class).getAllDepartments(page, size));
-        return PagedModel.of(departments, pageMetadata, linkBuilder.withSelfRel());
+        PagedModel<Department> pagedModel = PagedModel.of(departments, pageMetadata, linkBuilder.withSelfRel());
+
+        // Add links for next and previous pages, if applicable
+        if (page > 0) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page - 1) + "&size=" + size).withRel("prev"));
+        }
+        if (hasNext) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page + 1) + "&size=" + size).withRel("next"));
+        }
+
+        return pagedModel;
     }
 }
