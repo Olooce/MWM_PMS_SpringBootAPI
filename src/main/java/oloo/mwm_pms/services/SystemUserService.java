@@ -26,7 +26,7 @@ public class SystemUserService {
 
     public PagedModel<SystemUser> getAllSystemUsers(int page,
                                                      int size) {
-        List<SystemUser> systemUsers = systemUserRepository.findAll(page, size);
+        List<SystemUser> systemUsers = systemUserRepository.findAll(page, size +1 );
         int totalSystemUsers = systemUserRepository.count();
         Pageable pageable = PageRequest.of(page, size);
         PageImpl<SystemUser> systemUserPage = new PageImpl<>(systemUsers, pageable, totalSystemUsers);
@@ -47,3 +47,5 @@ public class SystemUserService {
         return hashedRawPassword.equals(hashedPassword);
     }
 }
+
+
