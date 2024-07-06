@@ -1,14 +1,11 @@
 package oloo.mwm_pms.services;
 
+
 import oloo.mwm_pms.controllers.SystemUserController;
 import oloo.mwm_pms.entinties.SystemUser;
 import oloo.mwm_pms.repositories.SystemUserRepository;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilderFactory;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +24,30 @@ public class SystemUserService {
     public PagedModel<SystemUser> getAllSystemUsers(int page,
                                                      int size) {
         List<SystemUser> systemUsers = systemUserRepository.findAll(page, size +1 );
-        int totalSystemUsers = systemUserRepository.count();
-        Pageable pageable = PageRequest.of(page, size);
-        PageImpl<SystemUser> systemUserPage = new PageImpl<>(systemUsers, pageable, totalSystemUsers);
 
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, totalSystemUsers);
-        WebMvcLinkBuilderFactory factory = new WebMvcLinkBuilderFactory();
-        WebMvcLinkBuilder linkBuilder = factory.linkTo(WebMvcLinkBuilder.methodOn(SystemUserController.class).getAllSystemUsers(page, size));
-        return PagedModel.of(systemUsers, pageMetadata, linkBuilder.withSelfRel());
+        if (systemUsers == null || systemUsers.isEmpty()) {
+            return null;
+        }
+
+        // Check if there is a next page
+        boolean hasNext = systemUsers.size() > size;
+        if (hasNext) {
+            systemUsers = systemUsers.subList(0, size);
+        }
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, systemUsers.size());
+        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SystemUserController.class).getAllSystemUsers(page, size));
+        PagedModel<SystemUser> pagedModel = PagedModel.of(systemUsers, pageMetadata, linkBuilder.withSelfRel());
+
+        // Add links for next and previous pages, if applicable
+        if (page > 0) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page - 1) + "&size=" + size).withRel("prev"));
+        }
+        if (hasNext) {
+            pagedModel.add(linkBuilder.slash("?page=" + (page + 1) + "&size=" + size).withRel("next"));
+        }
+
+        return pagedModel;
     }
 
 
