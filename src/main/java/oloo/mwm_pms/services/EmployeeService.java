@@ -23,17 +23,20 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public PagedModel<Employee> getAllEmployee( int page,
-                                         int size) {
+    public PagedModel<Employee> getAllEmployee(int page, int size) {
         List<Employee> employees = employeeRepository.findAll(page, size);
-        int totalEmployees =0;
-//        int totalEmployees = employeeRepository.count();
-        Pageable pageable = PageRequest.of(page,size);
 
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size,page, totalEmployees);
-        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getAllEmployee(page,size));
+        if (employees == null || employees.isEmpty()) {
+            return null;
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, employees.size());
+        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getAllEmployee(page, size));
         return PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
     }
+
 
 
     public PagedModel<Employee> getNewEmployeesGroupedByDepartment( LocalDate startDate,
