@@ -6,6 +6,8 @@ import oloo.mwm_pms.services.AllowanceService;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/allowances")
 public class AllowanceController {
@@ -16,8 +18,8 @@ public class AllowanceController {
 
 
     @GetMapping
-    public PagedModel<Allowance> getAllAllowances(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
+    public List<Allowance> getAllAllowances(@RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
         return allowanceService.getAllAllowances(page, size);
     }
 }

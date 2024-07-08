@@ -21,7 +21,7 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public PagedModel<Employee> getAllEmployee(int page, int size) {
+    public List<Employee> getAllEmployee(int page, int size) {
         // Fetch employees
         List<Employee> employees = employeeRepository.findAll(page, size);
 
@@ -35,19 +35,7 @@ public class EmployeeService {
             employees = employees.subList(0, size);
         }
 
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page, employees.size());
-        WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).getAllEmployee(page, size));
-        PagedModel<Employee> pagedModel = PagedModel.of(employees, pageMetadata, linkBuilder.withSelfRel());
-
-        // Add links for next and previous pages, if applicable
-        if (page > 0) {
-            pagedModel.add(linkBuilder.slash("?page=" + (page - 1) + "&size=" + size).withRel("prev"));
-        }
-        if (hasNext) {
-            pagedModel.add(linkBuilder.slash("?page=" + (page + 1) + "&size=" + size).withRel("next"));
-        }
-
-        return pagedModel;
+        return employees;
     }
 
     public PagedModel<Employee> getNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate, int page, int size) {

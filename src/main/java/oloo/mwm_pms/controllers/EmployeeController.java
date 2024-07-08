@@ -7,6 +7,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
@@ -19,8 +20,8 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
     @GetMapping
-    public PagedModel<Employee> getAllEmployee(@RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "10") int size) {
+    public List<Employee> getAllEmployee(@RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size) {
         return employeeService.getAllEmployee(page, size);
     }
 
