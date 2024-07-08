@@ -20,7 +20,7 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
     @GetMapping
-    public List<Employee> getAllEmployee(@RequestParam(defaultValue = "0") int page,
+    public List<Employee> getAllEmployee(@RequestParam(defaultValue = "1") int page,
                                          @RequestParam(defaultValue = "10") int size) {
         return employeeService.getAllEmployee(page, size);
     }
@@ -29,7 +29,7 @@ public class EmployeeController {
     public PagedModel<Employee> getNewEmployeesGroupedByDepartment(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size){
 
         if (startDate == null) {

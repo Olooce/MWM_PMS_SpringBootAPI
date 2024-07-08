@@ -40,7 +40,7 @@ public class SalaryController {
     }
 
     @GetMapping
-    public List<Salary> getAllSalaries(@RequestParam(defaultValue = "0") int page,
+    public List<Salary> getAllSalaries(@RequestParam(defaultValue = "1") int page,
                                              @RequestParam(defaultValue = "10") int size) {
         return salaryService.getAllSalaries(page, size);
     }

@@ -22,7 +22,7 @@ public class SalaryRepository {
     }
 
     public List<Salary> findAll(int page, int size) {
-        int offset = page * size;
+        int offset = (page-1) * size;
         return jdbcTemplate.query("SELECT * FROM salaries LIMIT ? OFFSET ?",
                 new Object[]{size, offset},
                 new SalaryRowMapper()
