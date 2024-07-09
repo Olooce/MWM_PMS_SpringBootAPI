@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EmployeeRepository {
@@ -100,6 +101,36 @@ public class EmployeeRepository {
 
         return employee;
     }
+
+    public Optional<Employee> findById(Long employeeId) {
+        String sql = "SELECT * FROM employees WHERE employee_id = ?";
+        List<Employee> employees = jdbcTemplate.query(sql, new Object[]{employeeId}, new EmployeeRowMapper());
+        return employees.isEmpty() ? Optional.empty() : Optional.of(employees.get(0));
+    }
+
+    public Employee save(Employee employee) {
+        String sql = "UPDATE employees SET name = ?, dob = ?, gender = ?, department_id = ?, employment_type = ?, employment_date = ?, status = ?, status_description = ?, termination_date = ?, date_modified = ? WHERE employee_id = ?";
+        jdbcTemplate.update(sql,
+                employee.getName(),
+                employee.getDob(),
+                employee.getGender(),
+                employee.getDepartmentId(),
+                employee.getEmploymentType().name(),
+                employee.getEmploymentDate(),
+                employee.getStatus().name(),
+                employee.getStatusDescription(),
+                employee.getTerminationDate(),
+                employee.getDateModified(),
+                employee.getEmployeeId()
+        );
+        return employee;
+    }
+
+    public void deleteById(Long employeeId) {
+        String sql = "DELETE FROM employees WHERE employee_id = ?";
+        jdbcTemplate.update(sql, employeeId);
+    }
+
 
     private static class EmployeeRowMapper implements RowMapper<Employee> {
         @Override

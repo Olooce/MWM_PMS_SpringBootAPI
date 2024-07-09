@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -92,5 +93,28 @@ public class EmployeeService {
         employee.setTerminationDate(employeeDto.getTerminationDate());
 
         return employeeRepository.addEmployee(employee);
+    }
+
+    public Employee updateEmployee(Long employeeId, EmployeeDTO employeeDto) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if (employeeOptional.isPresent()) {
+            Employee employee = employeeOptional.get();
+            employee.setName(employeeDto.getName());
+            employee.setDob(employeeDto.getDob());
+            employee.setGender(employeeDto.getGender());
+            employee.setDepartmentId(employeeDto.getDepartmentId());
+            employee.setEmploymentType(EmploymentType.valueOf(employeeDto.getEmploymentType()));
+            employee.setEmploymentDate(employeeDto.getEmploymentDate());
+            employee.setStatus(EmployeeStatus.valueOf(employeeDto.getStatus()));
+            employee.setStatusDescription(employeeDto.getStatusDescription());
+            employee.setTerminationDate(employeeDto.getTerminationDate());
+            return employeeRepository.save(employee);
+        } else {
+            return null;
+        }
+    }
+
+    public void deleteEmployee(Long employeeId) {
+        employeeRepository.deleteById(employeeId);
     }
 }

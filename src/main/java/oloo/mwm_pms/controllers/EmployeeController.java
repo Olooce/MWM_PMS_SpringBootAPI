@@ -52,6 +52,15 @@ public class EmployeeController {
     public Employee addNewEmployee(@RequestBody EmployeeDTO employeeDto) {
         return employeeService.addNewEmployee(employeeDto);
     }
+    @PutMapping("/{employeeId}")
+    public Employee updateEmployee(@PathVariable Long employeeId, @RequestBody EmployeeDTO employeeDto) {
+        return employeeService.updateEmployee(employeeId, employeeDto);
+    }
+
+    @DeleteMapping("/{employeeId}")
+    public void deleteEmployee(@PathVariable Long employeeId) {
+        employeeService.deleteEmployee(employeeId);
+    }
 
     @PostMapping("/search")
     public List<Employee> searchEmployee(@RequestParam String searchTerm) {
