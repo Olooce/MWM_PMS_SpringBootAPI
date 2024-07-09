@@ -23,7 +23,7 @@ public class SalaryRepository {
 
     public List<Salary> findAll(int page, int size) {
         int offset = (page-1) * size;
-        return jdbcTemplate.query("SELECT * FROM salaries ORDER BY month DESC LIMIT ? OFFSET ? ",
+        return jdbcTemplate.query("SELECT * FROM salaries ORDER BY month LIMIT ? OFFSET ? ",
                 new Object[]{size, offset},
                 new SalaryRowMapper()
         );
