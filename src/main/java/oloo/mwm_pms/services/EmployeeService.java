@@ -37,6 +37,9 @@ public class EmployeeService {
 
         return employees;
     }
+    public List<Employee> searchEmployees(String searchTerm) {
+        return employeeRepository.searchEmployees(searchTerm);
+    }
 
     public PagedModel<Employee> getNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate, int page, int size) {
         // Fetch new employees grouped by department
