@@ -52,4 +52,9 @@ public class EmployeeController {
     public Employee addNewEmployee(@RequestBody EmployeeDTO employeeDto) {
         return employeeService.addNewEmployee(employeeDto);
     }
+
+    @PostMapping("/search")
+    public List<Employee> searchEmployee(@RequestBody String searchTerm) {
+        return employeeService.searchEmployees(searchTerm);
+    }
 }
