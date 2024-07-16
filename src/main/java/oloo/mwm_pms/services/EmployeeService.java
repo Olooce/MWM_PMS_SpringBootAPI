@@ -38,8 +38,8 @@ public class EmployeeService {
 
         return employees;
     }
-    public List<Employee> searchEmployees(String searchTerm) {
-        return employeeRepository.searchEmployees(searchTerm);
+    public List<Employee> searchEmployees(String searchTerm, int page, int size) {
+        return employeeRepository.searchEmployees(searchTerm, page, size);
     }
 
     public PagedModel<Employee> getNewEmployeesGroupedByDepartment(LocalDate startDate, LocalDate endDate, int page, int size) {

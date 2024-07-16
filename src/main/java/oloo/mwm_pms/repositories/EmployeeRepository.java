@@ -30,19 +30,20 @@ public class EmployeeRepository {
         );
     }
 
-    public List<Employee> searchEmployees(String searchTerm) {
+    public List<Employee> searchEmployees(String searchTerm, int page, int size) {
+        int offset = (page-1) * size;
         String sql = "SELECT * FROM employees WHERE " +
                 "name LIKE ? OR " +
                 "CAST(employee_id AS CHAR) LIKE ? OR " +
                 "gender LIKE ? OR " +
                 "CAST(department_id AS CHAR) LIKE ? OR " +
                 "employment_type LIKE ? OR " +
-                "status LIKE ?";
+                "status LIKE ? LIMIT ? OFFSET ?";
 
         String searchPattern = "%" + searchTerm + "%";
 
         return jdbcTemplate.query(sql,
-                new Object[]{searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern},
+                new Object[]{searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, size, offset},
                 new EmployeeRowMapper()
         );
     }

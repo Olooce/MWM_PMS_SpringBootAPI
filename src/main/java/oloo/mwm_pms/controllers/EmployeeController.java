@@ -63,7 +63,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/search")
-    public List<Employee> searchEmployee(@RequestParam String searchTerm) {
-        return employeeService.searchEmployees(searchTerm);
+    public List<Employee> searchEmployee(@RequestParam String searchTerm, @RequestParam int page, @RequestParam int size) {
+        return employeeService.searchEmployees(searchTerm, page, size);
     }
 }
