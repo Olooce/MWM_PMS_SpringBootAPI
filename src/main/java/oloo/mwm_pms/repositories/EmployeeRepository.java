@@ -24,11 +24,19 @@ public class EmployeeRepository {
 
     public List<Employee> findAll(int page, int size) {
         int offset = (page-1) * size;
-        return jdbcTemplate.query("SELECT e.employee_id FROM employees e JOIN departments d ON e.department_id = d.department_id ORDER BY employee_id LIMIT ? OFFSET ? ",
+        return jdbcTemplate.query("SELECT * FROM employees ORDER BY employee_id LIMIT ? OFFSET ? ",
                 new Object[]{size, offset},
                 new EmployeeRowMapper()
         );
     }
+
+//    public List<Employee> findAll(int page, int size) {
+//        int offset = (page-1) * size;
+//        return jdbcTemplate.query("SELECT e.employee_id, e.name, e.gender,e.dob, d.department_name, e.employment_type,e.status, e.status_description, e.date_created, e.date_modified FROM employees e JOIN departments d ON e.department_id = d.department_id ORDER BY employee_id LIMIT ? OFFSET ? ",
+//                new Object[]{size, offset},
+//                new EmployeeRowMapper()
+//        );
+//    }
 
     public List<Employee> searchEmployees(String searchTerm, int page, int size) {
         int offset = (page-1) * size;
