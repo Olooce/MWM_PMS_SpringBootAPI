@@ -23,19 +23,13 @@ public class EmployeeService {
     }
 
     public List<Employee> getAllEmployee(int page, int size) {
-        // Fetch employees
+
         List<Employee> employees = employeeRepository.findAll(page, size);
 
         if (employees == null || employees.isEmpty()) {
             return null;
         }
-
-        // Check if there are more employees than the page size to determine if there is a next page
-        boolean hasNext = employees.size() > size;
-        if (hasNext) {
-            employees = employees.subList(0, size);
-        }
-
+        
         return employees;
     }
     public List<Employee> searchEmployees(String searchTerm, int page, int size) {
