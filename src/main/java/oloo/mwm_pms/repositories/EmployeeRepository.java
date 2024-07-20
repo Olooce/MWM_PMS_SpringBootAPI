@@ -45,115 +45,115 @@ public class EmployeeRepository {
 //        );
 //    }
 
-    public void exportEmployeesToExcel(String filePath) {
-        String sql = "SELECT * FROM employees";
-
-        try {
-            List<Employee> employees = jdbcTemplate.query(sql, new EmployeeRowMapper());
-
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Employees");
-
-            writeHeaderLine(sheet);
-            writeDataLines(employees, workbook, sheet);
-
-            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
-                workbook.write(outputStream);
-            }
-
-            workbook.close();
-            System.out.println("Data exported to Excel successfully!");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeHeaderLine(Sheet sheet) {
-        Row headerRow = sheet.createRow(0);
-
-        Cell headerCell = headerRow.createCell(0);
-        headerCell.setCellValue("Employee ID");
-
-        headerCell = headerRow.createCell(1);
-        headerCell.setCellValue("Name");
-
-        headerCell = headerRow.createCell(2);
-        headerCell.setCellValue("Gender");
-
-        headerCell = headerRow.createCell(3);
-        headerCell.setCellValue("DOB");
-
-        headerCell = headerRow.createCell(4);
-        headerCell.setCellValue("Department ID");
-
-        headerCell = headerRow.createCell(5);
-        headerCell.setCellValue("Employment Type");
-
-        headerCell = headerRow.createCell(6);
-        headerCell.setCellValue("Employment Date");
-
-        headerCell = headerRow.createCell(7);
-        headerCell.setCellValue("Status");
-
-        headerCell = headerRow.createCell(8);
-        headerCell.setCellValue("Status Description");
-
-        headerCell = headerRow.createCell(9);
-        headerCell.setCellValue("Termination Date");
-
-        headerCell = headerRow.createCell(10);
-        headerCell.setCellValue("Date Created");
-
-        headerCell = headerRow.createCell(11);
-        headerCell.setCellValue("Date Modified");
-    }
-
-    private void writeDataLines(List<Employee> employees, Workbook workbook, Sheet sheet) {
-        int rowCount = 1;
-
-        for (Employee employee : employees) {
-            Row row = sheet.createRow(rowCount++);
-
-            int columnCount = 0;
-
-            Cell cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getEmployeeId());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getName());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getGender());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getDob().toString());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getDepartmentId());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getEmploymentType().name());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getEmploymentDate().toString());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getStatus().name());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getStatusDescription());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getTerminationDate() != null ? employee.getTerminationDate().toString() : "");
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getDateCreated().toString());
-
-            cell = row.createCell(columnCount++);
-            cell.setCellValue(employee.getDateModified().toString());
-        }
-    }
+//    public void exportEmployeesToExcel(String filePath) {
+//        String sql = "SELECT * FROM employees";
+//
+//        try {
+//            List<Employee> employees = jdbcTemplate.query(sql, new EmployeeRowMapper());
+//
+//            Workbook workbook = new XSSFWorkbook();
+//            Sheet sheet = workbook.createSheet("Employees");
+//
+//            writeHeaderLine(sheet);
+//            writeDataLines(employees, workbook, sheet);
+//
+//            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+//                workbook.write(outputStream);
+//            }
+//
+//            workbook.close();
+//            System.out.println("Data exported to Excel successfully!");
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void writeHeaderLine(Sheet sheet) {
+//        Row headerRow = sheet.createRow(0);
+//
+//        Cell headerCell = headerRow.createCell(0);
+//        headerCell.setCellValue("Employee ID");
+//
+//        headerCell = headerRow.createCell(1);
+//        headerCell.setCellValue("Name");
+//
+//        headerCell = headerRow.createCell(2);
+//        headerCell.setCellValue("Gender");
+//
+//        headerCell = headerRow.createCell(3);
+//        headerCell.setCellValue("DOB");
+//
+//        headerCell = headerRow.createCell(4);
+//        headerCell.setCellValue("Department ID");
+//
+//        headerCell = headerRow.createCell(5);
+//        headerCell.setCellValue("Employment Type");
+//
+//        headerCell = headerRow.createCell(6);
+//        headerCell.setCellValue("Employment Date");
+//
+//        headerCell = headerRow.createCell(7);
+//        headerCell.setCellValue("Status");
+//
+//        headerCell = headerRow.createCell(8);
+//        headerCell.setCellValue("Status Description");
+//
+//        headerCell = headerRow.createCell(9);
+//        headerCell.setCellValue("Termination Date");
+//
+//        headerCell = headerRow.createCell(10);
+//        headerCell.setCellValue("Date Created");
+//
+//        headerCell = headerRow.createCell(11);
+//        headerCell.setCellValue("Date Modified");
+//    }
+//
+//    private void writeDataLines(List<Employee> employees, Workbook workbook, Sheet sheet) {
+//        int rowCount = 1;
+//
+//        for (Employee employee : employees) {
+//            Row row = sheet.createRow(rowCount++);
+//
+//            int columnCount = 0;
+//
+//            Cell cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getEmployeeId());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getName());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getGender());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getDob().toString());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getDepartmentId());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getEmploymentType().name());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getEmploymentDate().toString());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getStatus().name());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getStatusDescription());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getTerminationDate() != null ? employee.getTerminationDate().toString() : "");
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getDateCreated().toString());
+//
+//            cell = row.createCell(columnCount++);
+//            cell.setCellValue(employee.getDateModified().toString());
+//        }
+//    }
 
     public List<Employee> searchEmployees(String searchTerm, int page, int size) {
         int offset = (page-1) * size;
