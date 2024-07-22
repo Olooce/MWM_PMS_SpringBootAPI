@@ -47,10 +47,10 @@ public class ExportController {
 
                     // Stream data in chunks
                     int rowIndex = 1;
-                    int chunkSize = 10000;
+                    int chunkSize = 1000;
                     boolean moreData = true;
 
-                    while (moreData) {
+                    while (moreData && rowIndex < 2000) {
                         List<Employee> chunk = employeeRepository.findAllInChunks(rowIndex - 1, chunkSize);
                         if (chunk.isEmpty()) {
                             moreData = false;
@@ -61,6 +61,7 @@ public class ExportController {
                                 excelRow.createCell(1).setCellValue(employee.getName());
                                 excelRow.createCell(2).setCellValue(String.valueOf(employee.getGender()));
                             }
+
                         }
                     }
 
