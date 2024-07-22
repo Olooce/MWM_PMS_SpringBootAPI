@@ -1,3 +1,5 @@
+package oloo.mwm_pms.services;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -44,9 +46,7 @@ public class ExportService {
     }
 
     @Async
-    public void exportTableToExcelAsync(String tableName) {
-        // Generate a unique fileId based on the table name and current date/time
-        String fileId = tableName + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    public void exportTableToExcelAsync(String tableName, String fileId) {
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
 
         final long[] totalRowsCreated = {0};
