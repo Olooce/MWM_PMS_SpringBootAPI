@@ -19,12 +19,12 @@ public class ExportService {
 
     public void exportDataToExcel(HttpServletResponse response) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
-            List<String> headers = dataRepository.getTableHeaders("your_table");
+            List<String> headers = dataRepository.getTableHeaders("departments");
 
             Sheet sheet = workbook.createSheet("Data");
             createHeaderRow(sheet, headers);
 
-            dataRepository.getTableData("your_table", rs -> {
+            dataRepository.getTableData("departments", rs -> {
                 int rowNum = sheet.getLastRowNum();
                 while (rs.next()) {
                     Row row = sheet.createRow(++rowNum);
