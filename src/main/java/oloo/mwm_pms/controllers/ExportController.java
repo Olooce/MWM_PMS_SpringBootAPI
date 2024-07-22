@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class ExportController {
     }
 
     @GetMapping("/api/export/table")
-    public ResponseEntity<byte[]> exportTableToExcel() throws IOException {
+    public ResponseEntity<StreamingResponseBody> exportTableToExcel() throws IOException {
 //        // Create a sample table data
 //        List<String[]> tableData = new ArrayList<>();
 //        tableData.add(new String[]{"ID", "Name", "Age"});
