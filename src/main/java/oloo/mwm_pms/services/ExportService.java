@@ -32,7 +32,7 @@ public class ExportService {
     private final DataRepository dataRepository;
     private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
     private static final int CHUNK_SIZE = 100;
-    private static final int MAX_ROWS_PER_SHEET = 1048576;
+    private static final int MAX_ROWS_PER_SHEET = 1048574;
 
     @Autowired
     public ExportService(DataRepository dataRepository) {
@@ -53,36 +53,27 @@ public class ExportService {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
             List<String> headers = dataRepository.getTableHeaders(tableName);
-            Row headerRow = sheet[0].createRow(0);
-            for (int i = 0; i < headers.size(); i++) {
-                headerRow.createCell(i).setCellValue(headers.get(i));
-            }
+            createHeaderRow(sheet[0], headers);
 
             System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
 
             int offset = 0;
-            int rowIndex = 1;
             boolean moreData = true;
 
             while (moreData) {
-                // Use a flag to determine if more data is available
                 final boolean[] dataAvailable = {false};
 
-                int finalRowIndex = rowIndex;
                 dataRepository.getTableData(tableName, offset, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
-                    int rowCounter = finalRowIndex;
+                    int rowCounter = sheet[0].getLastRowNum() + 1;
 
                     @Override
                     public void processRow(ResultSet rs) throws SQLException {
-                        if (rowCounter > MAX_ROWS_PER_SHEET) {
+                        if (rowCounter >= MAX_ROWS_PER_SHEET) {
                             System.out.println("Sheet row limit reached. Creating new sheet.");
                             sheetIndex[0]++;
                             sheet[0] = workbook.createSheet("Sheet " + (sheetIndex[0] + 1));
-                            Row newHeaderRow = sheet[0].createRow(0);
-                            for (int i = 0; i < headers.size(); i++) {
-                                newHeaderRow.createCell(i).setCellValue(headers.get(i));
-                            }
+                            createHeaderRow(sheet[0], headers);
                             rowCounter = 1;
                             System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
                         }
@@ -111,14 +102,10 @@ public class ExportService {
                     }
                 });
 
-                rowIndex += CHUNK_SIZE;
                 offset += CHUNK_SIZE;
-
-                // If no data was processed, exit the loop
                 moreData = dataAvailable[0];
             }
 
-            // Write the workbook to the file once all rows have been processed
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
             }
@@ -128,6 +115,12 @@ public class ExportService {
         }
     }
 
+    private void createHeaderRow(Sheet sheet, List<String> headers) {
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.size(); i++) {
+            headerRow.createCell(i).setCellValue(headers.get(i));
+        }
+    }
 
     public Resource loadFileAsResource(String fileId) throws Exception {
         Path filePath = fileStorageLocation.resolve(fileId + ".xlsx").normalize();
