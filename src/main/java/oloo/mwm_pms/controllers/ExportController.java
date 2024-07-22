@@ -47,10 +47,10 @@ public class ExportController {
 
                     // Stream data in chunks
                     int rowIndex = 1;
-                    int chunkSize = 1000;
+                    int chunkSize = 100;
                     boolean moreData = true;
 
-                    while (moreData && rowIndex < 2000) {
+                    while (moreData) {
                         List<Employee> chunk = employeeRepository.findAllInChunks(rowIndex - 1, chunkSize);
                         if (chunk.isEmpty()) {
                             moreData = false;
