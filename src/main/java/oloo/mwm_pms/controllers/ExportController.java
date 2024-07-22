@@ -2,7 +2,6 @@ package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.entinties.Employee;
 import oloo.mwm_pms.repositories.EmployeeRepository;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -10,17 +9,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Iterator;
 
 @RestController
 public class ExportController {
+
     private final EmployeeRepository employeeRepository;
 
     public ExportController(EmployeeRepository employeeRepository) {
@@ -44,7 +44,7 @@ public class ExportController {
                 int chunkSize = 100; // Adjust chunk size as needed
                 boolean moreData = true;
 
-                while (moreData && rowIndex < 1000000) {
+                while (moreData) {
                     List<Employee> chunk = employeeRepository.findAllInChunks(rowIndex - 1, chunkSize);
                     if (chunk.isEmpty()) {
                         moreData = false;
