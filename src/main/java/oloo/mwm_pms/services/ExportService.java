@@ -32,8 +32,8 @@ public class ExportService {
     private static final Logger LOGGER = Logger.getLogger(ExportService.class.getName());
     private final DataRepository dataRepository;
     private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
-    private static final int CHUNK_SIZE = 100;  // Define the size of each chunk
-    private static final int MAX_ROWS_PER_SHEET = 1048576;  // Excel row limit
+    private static final int CHUNK_SIZE = 100;
+    private static final int MAX_ROWS_PER_SHEET = 1048576;
 
     @Autowired
     public ExportService(DataRepository dataRepository) {
@@ -46,6 +46,7 @@ public class ExportService {
 
     @Async
     public void exportTableToExcelAsync(String tableName, String fileId) {
+        final long[] totalRowsCreated = {0};
         try (Workbook workbook = new SXSSFWorkbook()) {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
@@ -54,6 +55,8 @@ public class ExportService {
             for (int i = 0; i < headers.size(); i++) {
                 headerRow.createCell(i).setCellValue(headers.get(i));
             }
+
+            System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
 
             int offset = 0;
             int rowIndex = 1;
@@ -68,6 +71,7 @@ public class ExportService {
                     @Override
                     public void processRow(ResultSet rs) throws SQLException {
                         if (rowCounter > MAX_ROWS_PER_SHEET) {
+                            System.out.println("Sheet row limit reached. Creating new sheet.");
                             sheetIndex[0]++;
                             sheet[0] = workbook.createSheet("Sheet " + (sheetIndex[0] + 1));
                             Row newHeaderRow = sheet[0].createRow(0);
@@ -75,6 +79,7 @@ public class ExportService {
                                 newHeaderRow.createCell(i).setCellValue(headers.get(i));
                             }
                             rowCounter = 1;
+                            System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
                         }
 
                         if (columnNameIndexMap.isEmpty()) {
@@ -91,6 +96,11 @@ public class ExportService {
                             } else {
                                 excelRow.createCell(i).setCellValue("");
                             }
+                        }
+
+                        totalRowsCreated[0]++;
+                        if (totalRowsCreated[0] % 1000 == 0) {  // Print every 1000 rows
+                            System.out.println("Total rows created: " + totalRowsCreated[0]);
                         }
                     }
                 });
