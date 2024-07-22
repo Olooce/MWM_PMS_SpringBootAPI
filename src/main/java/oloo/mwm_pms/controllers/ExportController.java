@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -18,7 +19,7 @@ public class ExportController {
     private ExportService exportService;
 
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public void exportToExcel(HttpServletResponse response) {
+    public void exportToExcel(@RequestParam("response") HttpServletResponse response) {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=data.xlsx");
 
