@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.BinaryMessage;
+import org.springframework.web.socket.WebSocketSession;
+
 import java.util.stream.IntStream;
 
 import java.io.ByteArrayOutputStream;
@@ -57,6 +60,7 @@ public class ExportController {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
 
-        session.getBasicRemote().sendBinary(outputStream.toByteArray(), true);
+        BinaryMessage binaryMessage = new BinaryMessage(outputStream.toByteArray());
+        session.sendMessage(binaryMessage);
     }
 }
