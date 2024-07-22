@@ -1,82 +1,48 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.entinties.Employee;
-import oloo.mwm_pms.repositories.EmployeeRepository;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import oloo.mwm_pms.services.ExportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 @RestController
 public class ExportController {
 
     private static final Logger LOGGER = Logger.getLogger(ExportController.class.getName());
-    private final EmployeeRepository employeeRepository;
+    private final ExportService exportService;
 
-    public ExportController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    @Autowired
+    public ExportController(ExportService exportService) {
+        this.exportService = exportService;
     }
 
-    @GetMapping("/api/export/table")
-    @Async
-    public CompletableFuture<ResponseEntity<StreamingResponseBody>> exportTableToExcel() {
-        return CompletableFuture.supplyAsync(() -> {
-            StreamingResponseBody responseBody = outputStream -> {
-                try (Workbook workbook = new SXSSFWorkbook()) {  // Use SXSSFWorkbook for streaming
-                    Sheet sheet = workbook.createSheet("Table Data");
+    @PostMapping("/api/export/{tableName}")
+    public ResponseEntity<String> initiateExport(@PathVariable String tableName) {
+        String fileId = UUID.randomUUID().toString();
+        CompletableFuture.runAsync(() -> exportService.exportTableToExcelAsync(tableName, fileId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
+    }
 
-                    // Write header row
-                    Row headerRow = sheet.createRow(0);
-                    headerRow.createCell(0).setCellValue("Employee ID");
-                    headerRow.createCell(1).setCellValue("Name");
-                    headerRow.createCell(2).setCellValue("Gender");
-
-                    // Stream data in chunks
-                    int rowIndex = 1;
-                    int chunkSize = 100;
-                    boolean moreData = true;
-
-                    while (moreData) {
-                        List<Employee> chunk = employeeRepository.findAllInChunks(rowIndex - 1, chunkSize);
-                        if (chunk.isEmpty()) {
-                            moreData = false;
-                        } else {
-                            for (Employee employee : chunk) {
-                                Row excelRow = sheet.createRow(rowIndex++);
-                                excelRow.createCell(0).setCellValue(employee.getEmployeeId());
-                                excelRow.createCell(1).setCellValue(employee.getName());
-                                excelRow.createCell(2).setCellValue(String.valueOf(employee.getGender()));
-                            }
-
-                        }
-                    }
-
-                    // Write the workbook to the output stream
-                    workbook.write(outputStream);
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
-                    throw new RuntimeException("Error writing Excel file", e);
-                }
-            };
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(org.springframework.http.MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", "table_data.xlsx");
-            return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
-        });
+    @GetMapping("/api/download/{fileId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
+        try {
+            Resource resource = exportService.loadFileAsResource(fileId);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileId + ".xlsx")
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

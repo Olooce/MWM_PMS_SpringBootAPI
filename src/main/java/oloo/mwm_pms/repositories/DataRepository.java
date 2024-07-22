@@ -35,7 +35,8 @@ public class DataRepository {
         return headers;
     }
 
-    public void getTableData(String tableName, RowCallbackHandler callbackHandler) {
-        jdbcTemplate.query("SELECT * FROM " + tableName, callbackHandler);
+    public void getTableData(String tableName, int offset, int limit, RowCallbackHandler callbackHandler) {
+        String query = String.format("SELECT * FROM %s LIMIT %d OFFSET %d", tableName, limit, offset);
+        jdbcTemplate.query(query, callbackHandler);
     }
 }
