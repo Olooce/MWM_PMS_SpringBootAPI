@@ -28,8 +28,8 @@ public class ExportController {
     }
 
     @GetMapping("/api/export/table")
-    public ResponseEntity<byte[]> exportTableToExcel() throws IOException {
-        List<Employee> tableData = employeeRepository.findAll(1, 10000);
+    public void exportTableToExcel(WebSocketSession session) throws IOException {
+        List<Employee> tableData = employeeRepository.findAll(1, 1000);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Table Data");
 
@@ -57,9 +57,6 @@ public class ExportController {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(org.springframework.http.MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "table_data.xlsx");
-        return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
+        session.getBasicRemote().sendBinary(outputStream.toByteArray(), true);
     }
 }
