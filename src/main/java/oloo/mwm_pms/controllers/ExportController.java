@@ -40,12 +40,12 @@ public class ExportController {
                 headerRow.createCell(2).setCellValue("Gender");
 
                 // Stream data in chunks
-                int rowIndex = 0;
-                int chunkSize = 1; // Adjust chunk size as needed
+                int rowIndex = 1; // Starting from 1 because row 0 is the header
+                int chunkSize = 100; // Adjust chunk size as needed
                 boolean moreData = true;
 
-                while (moreData) {
-                    List<Employee> chunk = employeeRepository.findAllInChunks(rowIndex, chunkSize);
+                while (moreData && rowIndex < 1000000) {
+                    List<Employee> chunk = employeeRepository.findAllInChunks(rowIndex - 1, chunkSize);
                     if (chunk.isEmpty()) {
                         moreData = false;
                     } else {
@@ -55,7 +55,6 @@ public class ExportController {
                             excelRow.createCell(1).setCellValue(employee.getName());
                             excelRow.createCell(2).setCellValue(String.valueOf(employee.getGender()));
                         }
-                        rowIndex += chunkSize;
                     }
                 }
 
