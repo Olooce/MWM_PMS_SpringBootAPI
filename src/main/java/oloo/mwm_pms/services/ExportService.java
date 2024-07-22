@@ -67,10 +67,13 @@ public class ExportService {
             boolean moreData = true;
 
             while (moreData) {
-                final int currentRowIndex = rowIndex;
+                // Use a flag to determine if more data is available
+                final boolean[] dataAvailable = {false};
+
+                int finalRowIndex = rowIndex;
                 dataRepository.getTableData(tableName, offset, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
-                    int rowCounter = currentRowIndex;
+                    int rowCounter = finalRowIndex;
 
                     @Override
                     public void processRow(ResultSet rs) throws SQLException {
@@ -103,6 +106,7 @@ public class ExportService {
                         }
 
                         totalRowsCreated[0]++;
+                        dataAvailable[0] = true; // Indicate that data was processed
                         if (totalRowsCreated[0] % 1000 == 0) {  // Print every 1000 rows
                             System.out.println("Total rows created: " + totalRowsCreated[0]);
                         }
@@ -111,7 +115,9 @@ public class ExportService {
 
                 rowIndex += CHUNK_SIZE;
                 offset += CHUNK_SIZE;
-                moreData = rowIndex > currentRowIndex;  // Check if more data was processed
+
+                // If no data was processed, exit the loop
+                moreData = dataAvailable[0];
             }
 
             // Write the workbook to the file once all rows have been processed
@@ -123,6 +129,7 @@ public class ExportService {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
         }
     }
+
 
     public Resource loadFileAsResource(String fileId) throws Exception {
         Path filePath = fileStorageLocation.resolve(fileId + ".xlsx").normalize();
