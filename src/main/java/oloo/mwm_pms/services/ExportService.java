@@ -35,10 +35,11 @@ public class ExportService {
                 }
             });
 
+            // Write the data to the output stream
             workbook.write(response.getOutputStream());
             response.flushBuffer();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error retrieving data from database", e);
         }
     }
 
@@ -50,4 +51,3 @@ public class ExportService {
         }
     }
 }
-
