@@ -20,9 +20,11 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.HashMap;
 
 @Service
 public class ExportService {
@@ -60,22 +62,35 @@ public class ExportService {
             while (moreData) {
                 final int currentRowIndex = rowIndex;
                 dataRepository.getTableData(tableName, offset, CHUNK_SIZE, new RowCallbackHandler() {
-                    int currentRow = currentRowIndex;
+                    Map<String, Integer> columnNameIndexMap = new HashMap<>();
+                    int rowCounter = currentRowIndex;
 
                     @Override
                     public void processRow(ResultSet rs) throws SQLException {
-                        if (currentRow > MAX_ROWS_PER_SHEET) {
+                        if (rowCounter > MAX_ROWS_PER_SHEET) {
                             sheetIndex[0]++;
                             sheet[0] = workbook.createSheet("Sheet " + (sheetIndex[0] + 1));
-                            Row headerRow = sheet[0].createRow(0);
+                            Row newHeaderRow = sheet[0].createRow(0);
                             for (int i = 0; i < headers.size(); i++) {
-                                headerRow.createCell(i).setCellValue(headers.get(i));
+                                newHeaderRow.createCell(i).setCellValue(headers.get(i));
                             }
-                            currentRow = 1;
+                            rowCounter = 1;
                         }
-                        Row excelRow = sheet[0].createRow(currentRow++);
+
+                        if (columnNameIndexMap.isEmpty()) {
+                            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                                columnNameIndexMap.put(rs.getMetaData().getColumnName(i), i);
+                            }
+                        }
+
+                        Row excelRow = sheet[0].createRow(rowCounter++);
                         for (int i = 0; i < headers.size(); i++) {
-                            excelRow.createCell(i).setCellValue(rs.getString(i + 1));
+                            Integer columnIndex = columnNameIndexMap.get(headers.get(i));
+                            if (columnIndex != null) {
+                                excelRow.createCell(i).setCellValue(rs.getString(columnIndex));
+                            } else {
+                                excelRow.createCell(i).setCellValue("");
+                            }
                         }
                     }
                 });
