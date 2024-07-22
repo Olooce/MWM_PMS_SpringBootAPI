@@ -19,12 +19,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.HashMap;
 
 @Service
 public class ExportService {
@@ -47,6 +47,8 @@ public class ExportService {
     @Async
     public void exportTableToExcelAsync(String tableName, String fileId) {
         final long[] totalRowsCreated = {0};
+        File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
+
         try (Workbook workbook = new SXSSFWorkbook()) {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
@@ -110,10 +112,11 @@ public class ExportService {
                 moreData = rowIndex > currentRowIndex;  // Check if more data was processed
             }
 
-            File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
+            // Write the workbook to the file
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
             }
+            System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
         }
