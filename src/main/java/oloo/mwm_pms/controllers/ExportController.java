@@ -12,10 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.socket.BinaryMessage;
-import org.springframework.web.socket.WebSocketSession;
-
-import java.util.stream.IntStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,36 +27,40 @@ public class ExportController {
     }
 
     @GetMapping("/api/export/table")
-    public void exportTableToExcel(WebSocketSession session) throws IOException {
-        List<Employee> tableData = employeeRepository.findAll(1, 1000);
+    public ResponseEntity<byte[]> exportTableToExcel() throws IOException {
+//        // Create a sample table data
+//        List<String[]> tableData = new ArrayList<>();
+//        tableData.add(new String[]{"ID", "Name", "Age"});
+//        tableData.add(new String[]{"1", "John Doe", "25"});
+//        tableData.add(new String[]{"2", "Jane Doe", "30"});
+//        tableData.add(new String[]{"3", "Bob Smith", "35"});
+
+        List<Employee> tableData = employeeRepository.findAll(1, 10000);
+        // Create a new Excel workbook
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Table Data");
 
-        IntStream.range(0, tableData.size())
-                .forEach(rowIndex -> {
-                    Row excelRow = sheet.createRow(rowIndex);
-                    Employee row = tableData.get(rowIndex);
-                    IntStream.range(0, 3)
-                            .forEach(colIndex -> {
-                                Cell cell = excelRow.createCell(colIndex);
-                                switch (colIndex) {
-                                    case 0:
-                                        cell.setCellValue(row.getEmployeeId());
-                                        break;
-                                    case 1:
-                                        cell.setCellValue(row.getName());
-                                        break;
-                                    case 2:
-                                        cell.setCellValue(String.valueOf(row.getGender()));
-                                        break;
-                                }
-                            });
-                });
+        // Write the table data to the Excel sheet
+        int rowIndex = 0;
+        for (Employee row : tableData) {
+            Row excelRow = sheet.createRow(rowIndex++);
+            int colIndex = 0;
+            Cell cell = excelRow.createCell(colIndex++);
+            cell.setCellValue(row.getEmployeeId());
+            cell = excelRow.createCell(colIndex++);
+            cell.setCellValue(row.getName());
+            cell = excelRow.createCell(colIndex++);
+            cell.setCellValue(String.valueOf(row.getGender()));
+        }
 
+        // Create a byte array output stream to write the Excel file to
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
 
-        BinaryMessage binaryMessage = new BinaryMessage(outputStream.toByteArray());
-        session.sendMessage(binaryMessage);
+        // Create a response entity with the Excel file
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "table_data.xlsx");
+        return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
     }
 }
