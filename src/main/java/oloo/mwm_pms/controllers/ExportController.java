@@ -1,33 +1,56 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.services.ExportService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/export")
 public class ExportController {
 
-    @Autowired
-    private ExportService exportService;
+    @GetMapping("/api/export/table")
+    public ResponseEntity<byte[]> exportTableToExcel() throws IOException {
+        // Create a sample table data
+        List<String[]> tableData = new ArrayList<>();
+        tableData.add(new String[]{"ID", "Name", "Age"});
+        tableData.add(new String[]{"1", "John Doe", "25"});
+        tableData.add(new String[]{"2", "Jane Doe", "30"});
+        tableData.add(new String[]{"3", "Bob Smith", "35"});
 
-    @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public void exportToExcel(@RequestParam("response") HttpServletResponse response) {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=data.xlsx");
+        // Create a new Excel workbook
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Table Data");
 
-        try {
-            exportService.exportDataToExcel(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        // Write the table data to the Excel sheet
+        int rowIndex = 0;
+        for (String[] row : tableData) {
+            Row excelRow = sheet.createRow(rowIndex++);
+            int colIndex = 0;
+            for (String cellValue : row) {
+                Cell cell = excelRow.createCell(colIndex++);
+                cell.setCellValue(cellValue);
+            }
         }
+
+        // Create a byte array output stream to write the Excel file to
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+
+        // Create a response entity with the Excel file
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "table_data.xlsx");
+        return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
     }
 }
