@@ -16,7 +16,7 @@ public class DataRepository {
     public List<String> getTableHeaders(String tableName) {
         return jdbcTemplate.query(
                 "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?",
-                new Object[]{tableName},
+                new Object[]{tableName.toUpperCase()},
                 (rs, rowNum) -> rs.getString("COLUMN_NAME")
         );
     }
@@ -25,3 +25,4 @@ public class DataRepository {
         jdbcTemplate.query("SELECT * FROM " + tableName, callbackHandler);
     }
 }
+
