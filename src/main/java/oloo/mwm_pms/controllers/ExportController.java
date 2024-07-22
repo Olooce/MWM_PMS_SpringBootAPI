@@ -35,7 +35,7 @@ public class ExportController {
 //        tableData.add(new String[]{"2", "Jane Doe", "30"});
 //        tableData.add(new String[]{"3", "Bob Smith", "35"});
 
-        List<Employee> tableData = employeeRepository.findAll(1, 10);
+        List<Employee> tableData = employeeRepository.findAll(1, 1000000);
         // Create a new Excel workbook
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Table Data");
@@ -46,11 +46,11 @@ public class ExportController {
             Row excelRow = sheet.createRow(rowIndex++);
             int colIndex = 0;
             Cell cell = excelRow.createCell(colIndex++);
-            cell.setCellValue(row.getEmployeeId()); // assuming Employee has an getId() method
+            cell.setCellValue(row.getEmployeeId());
             cell = excelRow.createCell(colIndex++);
-            cell.setCellValue(row.getName()); // assuming Employee has a getName() method
+            cell.setCellValue(row.getName());
             cell = excelRow.createCell(colIndex++);
-            cell.setCellValue(String.valueOf(row.getGender())); // assuming Employee has an getAge() method
+            cell.setCellValue(String.valueOf(row.getGender()));
         }
 
         // Create a byte array output stream to write the Excel file to
