@@ -257,6 +257,13 @@ public class EmployeeRepository {
         jdbcTemplate.update(sql, employeeId);
     }
 
+    public List<Employee> findAllInChunks(int rowIndex, int chunkSize) {
+        String sql = "SELECT * FROM employees ORDER BY employee_id LIMIT ? OFFSET ?";
+
+        return jdbcTemplate.query(sql, new Object[]{chunkSize, rowIndex}, new EmployeeRowMapper());
+    }
+
+
 
     private static class EmployeeRowMapper implements RowMapper<Employee> {
         @Override

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Iterator;
 
 @RestController
 public class ExportController {
@@ -38,16 +39,24 @@ public class ExportController {
                 headerRow.createCell(1).setCellValue("Name");
                 headerRow.createCell(2).setCellValue("Gender");
 
-                // Fetch data from the repository
-                List<Employee> tableData = employeeRepository.findAll(1, 10000);
+                // Stream data in chunks
+                int rowIndex = 0;
+                int chunkSize = 1; // Adjust chunk size as needed
+                boolean moreData = true;
 
-                // Write data rows
-                int rowIndex = 1;
-                for (Employee row : tableData) {
-                    Row excelRow = sheet.createRow(rowIndex++);
-                    excelRow.createCell(0).setCellValue(row.getEmployeeId());
-                    excelRow.createCell(1).setCellValue(row.getName());
-                    excelRow.createCell(2).setCellValue(String.valueOf(row.getGender()));
+                while (moreData) {
+                    List<Employee> chunk = employeeRepository.findAllInChunks(rowIndex, chunkSize);
+                    if (chunk.isEmpty()) {
+                        moreData = false;
+                    } else {
+                        for (Employee employee : chunk) {
+                            Row excelRow = sheet.createRow(rowIndex++);
+                            excelRow.createCell(0).setCellValue(employee.getEmployeeId());
+                            excelRow.createCell(1).setCellValue(employee.getName());
+                            excelRow.createCell(2).setCellValue(String.valueOf(employee.getGender()));
+                        }
+                        rowIndex += chunkSize;
+                    }
                 }
 
                 // Write the workbook to the output stream
