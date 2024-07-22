@@ -13,14 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 @RestController
 public class ExportController {
 
-    private static final Logger LOGGER = Logger.getLogger(ExportController.class.getName());
     private final ExportService exportService;
 
     @Autowired
