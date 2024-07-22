@@ -1,5 +1,3 @@
-package oloo.mwm_pms.services;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,6 +17,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +44,12 @@ public class ExportService {
     }
 
     @Async
-    public void exportTableToExcelAsync(String tableName, String fileId) {
-        final long[] totalRowsCreated = {0};
+    public void exportTableToExcelAsync(String tableName) {
+        // Generate a unique fileId based on the table name and current date/time
+        String fileId = tableName + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
+
+        final long[] totalRowsCreated = {0};
 
         try (Workbook workbook = new SXSSFWorkbook()) {
             final int[] sheetIndex = {0};
@@ -66,7 +69,7 @@ public class ExportService {
             while (moreData) {
                 final int currentRowIndex = rowIndex;
                 dataRepository.getTableData(tableName, offset, CHUNK_SIZE, new RowCallbackHandler() {
-                    Map<String, Integer> columnNameIndexMap = new HashMap<>();
+                    final Map<String, Integer> columnNameIndexMap = new HashMap<>();
                     int rowCounter = currentRowIndex;
 
                     @Override
