@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +48,8 @@ public class ExportService {
         final long[] totalRowsCreated = {0};
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
 
-        try (Workbook workbook = new SXSSFWorkbook()) {
+        try (Workbook workbook = new SXSSFWorkbook();
+             FileOutputStream fos = new FileOutputStream(file)) {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
             List<String> headers = dataRepository.getTableHeaders(tableName);
@@ -103,6 +103,12 @@ public class ExportService {
                         totalRowsCreated[0]++;
                         if (totalRowsCreated[0] % 1000 == 0) {  // Print every 1000 rows
                             System.out.println("Total rows created: " + totalRowsCreated[0]);
+                            try {
+                                workbook.write(fos);
+                                fos.flush();  // Ensure data is written to disk
+                            } catch (IOException e) {
+                                LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
+                            }
                         }
                     }
                 });
@@ -112,10 +118,8 @@ public class ExportService {
                 moreData = rowIndex > currentRowIndex;  // Check if more data was processed
             }
 
-            // Write the workbook to the file
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                workbook.write(fos);
-            }
+            // Write any remaining data to the file
+            workbook.write(fos);
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
