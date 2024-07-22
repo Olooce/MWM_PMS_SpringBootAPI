@@ -1,5 +1,7 @@
 package oloo.mwm_pms.controllers;
 
+import oloo.mwm_pms.entinties.Employee;
+import oloo.mwm_pms.repositories.EmployeeRepository;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -18,29 +20,37 @@ import java.util.List;
 
 @RestController
 public class ExportController {
+    private final EmployeeRepository employeeRepository;
+
+    public ExportController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     @GetMapping("/api/export/table")
     public ResponseEntity<byte[]> exportTableToExcel() throws IOException {
-        // Create a sample table data
-        List<String[]> tableData = new ArrayList<>();
-        tableData.add(new String[]{"ID", "Name", "Age"});
-        tableData.add(new String[]{"1", "John Doe", "25"});
-        tableData.add(new String[]{"2", "Jane Doe", "30"});
-        tableData.add(new String[]{"3", "Bob Smith", "35"});
+//        // Create a sample table data
+//        List<String[]> tableData = new ArrayList<>();
+//        tableData.add(new String[]{"ID", "Name", "Age"});
+//        tableData.add(new String[]{"1", "John Doe", "25"});
+//        tableData.add(new String[]{"2", "Jane Doe", "30"});
+//        tableData.add(new String[]{"3", "Bob Smith", "35"});
 
+        List<Employee> tableData = employeeRepository.findAll(1, 10);
         // Create a new Excel workbook
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Table Data");
 
         // Write the table data to the Excel sheet
         int rowIndex = 0;
-        for (String[] row : tableData) {
+        for (Employee row : tableData) {
             Row excelRow = sheet.createRow(rowIndex++);
             int colIndex = 0;
-            for (String cellValue : row) {
-                Cell cell = excelRow.createCell(colIndex++);
-                cell.setCellValue(cellValue);
-            }
+            Cell cell = excelRow.createCell(colIndex++);
+            cell.setCellValue(row.getEmployeeId()); // assuming Employee has an getId() method
+            cell = excelRow.createCell(colIndex++);
+            cell.setCellValue(row.getName()); // assuming Employee has a getName() method
+            cell = excelRow.createCell(colIndex++);
+            cell.setCellValue(String.valueOf(row.getGender())); // assuming Employee has an getAge() method
         }
 
         // Create a byte array output stream to write the Excel file to
