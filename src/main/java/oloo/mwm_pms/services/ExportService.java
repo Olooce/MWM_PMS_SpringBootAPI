@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -36,6 +37,8 @@ public class ExportService {
 
             workbook.write(response.getOutputStream());
             response.flushBuffer();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

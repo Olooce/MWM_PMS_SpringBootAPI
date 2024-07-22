@@ -5,24 +5,37 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class DataRepository {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+    private final DataSource dataSource;
 
-    public List<String> getTableHeaders(String tableName) {
-        return jdbcTemplate.query(
-                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?",
-                new Object[]{tableName.toUpperCase()},
-                (rs, rowNum) -> rs.getString("COLUMN_NAME")
-        );
+    @Autowired
+    public DataRepository(JdbcTemplate jdbcTemplate, DataSource dataSource) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.dataSource = dataSource;
+    }
+
+    public List<String> getTableHeaders(String tableName) throws SQLException {
+        List<String> headers = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            ResultSet rs = connection.getMetaData().getColumns(null, null, tableName, null);
+            while (rs.next()) {
+                headers.add(rs.getString("COLUMN_NAME"));
+            }
+        }
+        return headers;
     }
 
     public void getTableData(String tableName, RowCallbackHandler callbackHandler) {
         jdbcTemplate.query("SELECT * FROM " + tableName, callbackHandler);
     }
 }
-
