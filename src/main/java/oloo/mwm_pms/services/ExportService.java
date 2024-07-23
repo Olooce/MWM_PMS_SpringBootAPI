@@ -31,7 +31,7 @@ public class ExportService {
     private static final Logger LOGGER = Logger.getLogger(ExportService.class.getName());
     private final DataRepository dataRepository;
     private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
-    private static final int CHUNK_SIZE = 100;
+    private static final int CHUNK_SIZE = 10000;
     private static final int MAX_ROWS_PER_SHEET = 1048574;
 
     @Autowired
@@ -96,7 +96,7 @@ public class ExportService {
 
                         totalRowsCreated[0]++;
                         dataAvailable[0] = true; // Indicate that data was processed
-                        if (totalRowsCreated[0] % 1000 == 0) {  // Print every 1000 rows
+                        if (totalRowsCreated[0] % 100000 == 0) {  // Print every 1000 rows
                             System.out.println("Total rows created: " + totalRowsCreated[0]);
                         }
                     }
