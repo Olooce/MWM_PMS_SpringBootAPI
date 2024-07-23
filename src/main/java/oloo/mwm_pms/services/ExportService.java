@@ -31,7 +31,7 @@ public class ExportService {
     private static final Logger LOGGER = Logger.getLogger(ExportService.class.getName());
     private final DataRepository dataRepository;
     private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
-    private static final int CHUNK_SIZE = 10000;
+    private static final int CHUNK_SIZE = 25000;
     private static final int MAX_ROWS_PER_SHEET = 1048574;
 
     @Autowired
@@ -45,6 +45,10 @@ public class ExportService {
 
     @Async
     public void exportTableToExcelAsync(String tableName, String fileId) {
+        long startTime = System.currentTimeMillis();
+        final long[] currentTime = {startTime};
+        final long[] elapsedTime = new long[1];
+
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
 
         final long[] totalRowsCreated = {0};
@@ -97,6 +101,9 @@ public class ExportService {
                         totalRowsCreated[0]++;
                         dataAvailable[0] = true; // Indicate that data was processed
                         if (totalRowsCreated[0] % 100000 == 0) {  // Print every 1000 rows
+                            currentTime[0] = System.currentTimeMillis();
+                            elapsedTime[0] = (currentTime[0] - startTime)/1000;
+                            System.out.println("Elapsed Time: " + elapsedTime[0] /3600+ "H " + (elapsedTime[0] % 3600) /60 + "M " + elapsedTime[0] % 60 + "S");
                             System.out.println("Total rows created: " + totalRowsCreated[0]);
                         }
                     }
