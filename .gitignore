@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/exported_files/
+/temp/
