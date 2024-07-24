@@ -20,38 +20,28 @@ import java.util.stream.IntStream;
 public class DataRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private final DataSource dataSource;
 
     @Autowired
-    public DataRepository(JdbcTemplate jdbcTemplate, DataSource dataSource) {
+    public DataRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.dataSource = dataSource;
     }
 
-    public List<String> getTableHeaders(String tableName) throws SQLException {
+    public List<String> getTableHeaders(String tableName) {
         List<String> headers = new ArrayList<>();
-        String schemaPattern = "mwm_pms_db"; // Use null if you don't need to filter by schema
-        String catalogPattern = null; // Use null if your database doesn't use catalogs
+        String query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS " +
+                "WHERE TABLE_SCHEMA = 'mwm_pms_db' AND TABLE_NAME = ?";
 
-        try (Connection connection = dataSource.getConnection()) {
-            DatabaseMetaData metaData = connection.getMetaData();
-
-//            // Print out debugging information
-//            System.out.println("Catalog: " + catalogPattern);
-//            System.out.println("Schema: " + schemaPattern);
-//            System.out.println("Table: " + tableName);
-
-            // Query metadata for columns with specified schema and catalog
-            ResultSet rs = metaData.getColumns(catalogPattern, schemaPattern, tableName, null);
+        // Execute the query and process the ResultSet
+        jdbcTemplate.query(query, new Object[]{tableName}, rs -> {
             while (rs.next()) {
-                String columnName = rs.getString("COLUMN_NAME");
-//                System.out.println("Column: " + columnName);
-                headers.add(columnName);
+                headers.add(rs.getString("COLUMN_NAME"));
             }
-        }
+        });
+
         System.out.println(headers);
         return headers;
     }
+}
 
 
     public void getTableData(String tableName, int offset, int limit, RowCallbackHandler callbackHandler) {
