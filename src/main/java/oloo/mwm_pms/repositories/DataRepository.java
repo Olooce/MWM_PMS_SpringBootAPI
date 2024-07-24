@@ -30,7 +30,7 @@ public class DataRepository {
 
     public List<String> getTableHeaders(String tableName) throws SQLException {
         List<String> headers = new ArrayList<>();
-        String schemaPattern = null; // Use null if you don't need to filter by schema
+        String schemaPattern = "mwm_pms_db"; // Use null if you don't need to filter by schema
         String catalogPattern = null; // Use null if your database doesn't use catalogs
 
         try (Connection connection = dataSource.getConnection()) {
