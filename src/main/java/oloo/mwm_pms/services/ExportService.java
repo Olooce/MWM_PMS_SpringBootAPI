@@ -45,6 +45,8 @@ public class ExportService {
 
     @Async
     public void exportTableToExcelAsync(String tableName, String fileId) {
+        String tempDir = "/home/oloo/IdeaProjects/mwm_pms/temp";
+        System.setProperty("java.io.tmpdir", tempDir);
         long startTime = System.currentTimeMillis();
         final long[] currentTime = {startTime};
         final long[] elapsedTime = new long[1];
