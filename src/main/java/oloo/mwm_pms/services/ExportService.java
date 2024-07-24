@@ -33,6 +33,7 @@ public class ExportService {
     private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
     private static final int CHUNK_SIZE = 15000;
     private static final int MAX_ROWS_PER_SHEET = 1048574;
+    private static final String TEMPDIR = "/home/oloo/IdeaProjects/mwm_pms/temp";
 
     @Autowired
     public ExportService(DataRepository dataRepository) {
@@ -43,10 +44,10 @@ public class ExportService {
         }
     }
 
+
     @Async
     public void exportTableToExcelAsync(String tableName, String fileId) {
-        String tempDir = "/home/oloo/IdeaProjects/mwm_pms/temp";
-        System.setProperty("java.io.tmpdir", tempDir);
+        System.setProperty("java.io.tmpdir", TEMPDIR);
 
         long startTime = System.currentTimeMillis();
         final long[] currentTime = {startTime};
@@ -134,8 +135,7 @@ public class ExportService {
 
     @Async
     public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId) {
-        String tempDir = "/home/oloo/IdeaProjects/mwm_pms/temp";
-        System.setProperty("java.io.tmpdir", tempDir);
+        System.setProperty("java.io.tmpdir", TEMPDIR);
 
         long startTime = System.currentTimeMillis();
         final long[] currentTime = {startTime};
@@ -225,12 +225,6 @@ public class ExportService {
         }
     }
 
-    private void createHeaderRow(Sheet sheet, List<String> headers) {
-        Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < headers.size(); i++) {
-            headerRow.createCell(i).setCellValue(headers.get(i));
-        }
-    }
 
     public Resource loadFileAsResource(String fileId) throws Exception {
         Path filePath = fileStorageLocation.resolve(fileId + ".xlsx").normalize();
