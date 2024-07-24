@@ -6,10 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +29,17 @@ public class ExportController {
 
         // Start the export process asynchronously
         CompletableFuture.runAsync(() -> exportService.exportTableToExcelAsync(tableName, fileId));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
+    }
+
+    @PostMapping("/api/export/{tableName}")
+    public ResponseEntity<String> initiateExport(@PathVariable String tableName, @RequestParam Object searchTerm) {
+        // Generate a unique fileId based on the table name and current date/time
+        String fileId = tableName + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        // Start the export process asynchronously
+        CompletableFuture.runAsync(() -> exportService.exportSearchResultsToExcelAsync(tableName, searchTerm, fileId));
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
     }

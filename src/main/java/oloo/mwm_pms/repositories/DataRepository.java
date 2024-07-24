@@ -42,7 +42,7 @@ public class DataRepository {
         jdbcTemplate.query(query, callbackHandler);
     }
 
-    public void searchTable(String tableName, List<String> headers, String searchTerm, int page, int size, RowCallbackHandler callbackHandler) {
+    public void searchTable(String tableName, List<String> headers, Object searchTerm, int page, int size, RowCallbackHandler callbackHandler) {
         int offset = (page - 1) * size;
         String searchPattern = "%" + searchTerm + "%";
 

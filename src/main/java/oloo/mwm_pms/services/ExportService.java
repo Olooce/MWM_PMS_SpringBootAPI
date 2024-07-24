@@ -130,7 +130,7 @@ public class ExportService {
     }
 
     @Async
-    public void exportSearchResultsToExcelAsync(String tableName, String searchTerm, String fileId) {
+    public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId) {
         String tempDir = "/home/oloo/IdeaProjects/mwm_pms/temp";
         System.setProperty("java.io.tmpdir", tempDir);
 
@@ -156,7 +156,7 @@ public class ExportService {
             while (moreData) {
                 final boolean[] dataAvailable = {false};
 
-                dataRepository.searchTable(tableName,searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
+                dataRepository.searchTable(tableName,headers, searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
                     int rowCounter = sheet[0].getLastRowNum() + 1;
 
