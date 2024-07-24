@@ -56,7 +56,9 @@ public class ExportService {
 
         final long[] totalRowsCreated = {0};
 
-        try (Workbook workbook = new SXSSFWorkbook()) {
+        Workbook workbook = null;
+        try {
+            workbook = new SXSSFWorkbook();
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
             List<String> headers = dataRepository.getTableHeaders(tableName);
@@ -105,8 +107,8 @@ public class ExportService {
                         dataAvailable[0] = true; // Indicate that data was processed
                         if (totalRowsCreated[0] % 100000 == 0) {  // Print every 1000 rows
                             currentTime[0] = System.currentTimeMillis();
-                            elapsedTime[0] = (currentTime[0] - startTime)/1000;
-                            System.out.println("Elapsed Time: " + elapsedTime[0] /3600+ "H " + (elapsedTime[0] % 3600) /60 + "M " + elapsedTime[0] % 60 + "S");
+                            elapsedTime[0] = (currentTime[0] - startTime) / 1000;
+                            System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
                             System.out.println("Total rows created: " + totalRowsCreated[0]);
                         }
                     }
@@ -121,16 +123,15 @@ public class ExportService {
             }
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
             currentTime[0] = System.currentTimeMillis();
-            elapsedTime[0] = (currentTime[0] - startTime)/1000;
-            System.out.println("Elapsed Time: " + elapsedTime[0] /3600+ "H " + (elapsedTime[0] % 3600) /60 + "M " + elapsedTime[0] % 60 + "S");
+            elapsedTime[0] = (currentTime[0] - startTime) / 1000;
+            System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
+        } finally {
+            if (workbook != null) {
+                workbook.dispose(); // Clean up temporary files
+            }
         }
-        finally {
-        if (workbook != null) {
-            workbook.dispose(); // Clean up temporary files
-        }
-    }
     }
 
     private void createHeaderRow(Sheet sheet, List<String> headers) {
