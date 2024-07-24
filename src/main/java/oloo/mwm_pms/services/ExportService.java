@@ -31,7 +31,7 @@ public class ExportService {
     private static final Logger LOGGER = Logger.getLogger(ExportService.class.getName());
     private final DataRepository dataRepository;
     private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
-    private static final int CHUNK_SIZE = 15000;
+    private static final int CHUNK_SIZE = 25000;
     private static final int MAX_ROWS_PER_SHEET = 1048574;
     private static final String TEMPDIR = "/home/oloo/IdeaProjects/mwm_pms/temp";
 
@@ -57,7 +57,7 @@ public class ExportService {
 
         final long[] totalRowsCreated = {0};
 
-        try (Workbook workbook = new SXSSFWorkbook(2500)) {
+        try (Workbook workbook = new SXSSFWorkbook(1500)) {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
             List<String> headers = dataRepository.getTableHeaders(tableName);
