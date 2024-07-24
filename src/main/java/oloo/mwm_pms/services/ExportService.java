@@ -126,6 +126,11 @@ public class ExportService {
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
         }
+        finally {
+        if (workbook != null) {
+            workbook.dispose(); // Clean up temporary files
+        }
+    }
     }
 
     private void createHeaderRow(Sheet sheet, List<String> headers) {
