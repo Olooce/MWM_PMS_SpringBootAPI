@@ -119,6 +119,9 @@ public class ExportService {
                 workbook.write(fos);
             }
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
+            currentTime[0] = System.currentTimeMillis();
+            elapsedTime[0] = (currentTime[0] - startTime)/1000;
+            System.out.println("Elapsed Time: " + elapsedTime[0] /3600+ "H " + (elapsedTime[0] % 3600) /60 + "M " + elapsedTime[0] % 60 + "S");
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
         }
