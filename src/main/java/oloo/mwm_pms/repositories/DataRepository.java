@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,14 +30,29 @@ public class DataRepository {
 
     public List<String> getTableHeaders(String tableName) throws SQLException {
         List<String> headers = new ArrayList<>();
+        String schemaPattern = null; // Use null if you don't need to filter by schema
+        String catalogPattern = null; // Use null if your database doesn't use catalogs
+
         try (Connection connection = dataSource.getConnection()) {
-            ResultSet rs = connection.getMetaData().getColumns(null, null, tableName, null);
+            DatabaseMetaData metaData = connection.getMetaData();
+
+//            // Print out debugging information
+//            System.out.println("Catalog: " + catalogPattern);
+//            System.out.println("Schema: " + schemaPattern);
+//            System.out.println("Table: " + tableName);
+
+            // Query metadata for columns with specified schema and catalog
+            ResultSet rs = metaData.getColumns(catalogPattern, schemaPattern, tableName, null);
             while (rs.next()) {
-                headers.add(rs.getString("COLUMN_NAME"));
+                String columnName = rs.getString("COLUMN_NAME");
+//                System.out.println("Column: " + columnName);
+                headers.add(columnName);
             }
         }
+        System.out.println(headers);
         return headers;
     }
+
 
     public void getTableData(String tableName, int offset, int limit, RowCallbackHandler callbackHandler) {
         String query = String.format("SELECT * FROM %s LIMIT %d OFFSET %d", tableName, limit, offset);
