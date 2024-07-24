@@ -2,7 +2,6 @@ package oloo.mwm_pms.controllers;
 
 import oloo.mwm_pms.entinties.Salary;
 import oloo.mwm_pms.services.SalaryService;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
