@@ -33,7 +33,7 @@ public class ExportController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
     }
 
-    @PostMapping("/api/export/{tableName}")
+    @PostMapping("/api/exportSearch/{tableName}")
     public ResponseEntity<String> initiateExport(@PathVariable String tableName, @RequestParam Object searchTerm) {
         // Generate a unique fileId based on the table name and current date/time
         String fileId = tableName + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
