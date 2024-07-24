@@ -1,6 +1,7 @@
 package oloo.mwm_pms.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
@@ -46,9 +47,9 @@ public class DataRepository {
         int offset = (page - 1) * size;
         String searchPattern = "%" + searchTerm + "%";
 
-        // Build the SQL query dynamically
+        // Check column existence and dynamically build the SQL query
         String columnsClause = headers.stream()
-                .map(column -> column + " LIKE ?")
+                .map(column -> String.format("%s LIKE ?", column))
                 .collect(Collectors.joining(" OR "));
 
         String sql = String.format(
@@ -65,12 +66,12 @@ public class DataRepository {
         // Add pagination parameters
         params = append(params, size, offset);
 
-        // Execute the query
-        jdbcTemplate.query(
-                sql,
-                params,
-                callbackHandler
-        );
+        try {
+            jdbcTemplate.query(sql, params, callbackHandler);
+        } catch (BadSqlGrammarException e) {
+            // Log or handle the exception
+            System.err.println("SQL Error: " + e.getMessage());
+        }
     }
 
     private Object[] append(Object[] array, Object... elements) {
@@ -79,4 +80,5 @@ public class DataRepository {
         System.arraycopy(elements, 0, result, array.length, elements.length);
         return result;
     }
+
 }
