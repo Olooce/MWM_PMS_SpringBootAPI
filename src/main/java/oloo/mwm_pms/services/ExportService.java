@@ -47,7 +47,10 @@ public class ExportService {
     public void exportTableToExcelAsync(String tableName, String fileId) {
         String tempDir = "/home/oloo/IdeaProjects/mwm_pms/temp";
         System.setProperty("java.io.tmpdir", tempDir);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 24f63027cc16720593e8cd1e13ca08b7912bd553
         long startTime = System.currentTimeMillis();
         final long[] currentTime = {startTime};
         final long[] elapsedTime = new long[1];
@@ -60,7 +63,10 @@ public class ExportService {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
             List<String> headers = dataRepository.getTableHeaders(tableName);
+<<<<<<< HEAD
             System.out.println(headers);
+=======
+>>>>>>> 24f63027cc16720593e8cd1e13ca08b7912bd553
             createHeaderRow(sheet[0], headers);
 
             System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
@@ -213,6 +219,13 @@ public class ExportService {
             System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
+        }
+    }
+
+    private void createHeaderRow(Sheet sheet, List<String> headers) {
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.size(); i++) {
+            headerRow.createCell(i).setCellValue(headers.get(i));
         }
     }
 

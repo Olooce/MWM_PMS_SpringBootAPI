@@ -6,7 +6,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.*;
+=======
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+>>>>>>> 24f63027cc16720593e8cd1e13ca08b7912bd553
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +37,7 @@ public class ExportController {
         // Start the export process asynchronously
         CompletableFuture.runAsync(() -> exportService.exportTableToExcelAsync(tableName, fileId));
 
+<<<<<<< HEAD
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
     }
 
@@ -41,6 +49,8 @@ public class ExportController {
         // Start the export process asynchronously
         CompletableFuture.runAsync(() -> exportService.exportSearchResultsToExcelAsync(tableName, searchTerm, fileId));
 
+=======
+>>>>>>> 24f63027cc16720593e8cd1e13ca08b7912bd553
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
     }
 
