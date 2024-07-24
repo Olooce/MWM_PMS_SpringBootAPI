@@ -31,7 +31,7 @@ public class ExportService {
     private static final Logger LOGGER = Logger.getLogger(ExportService.class.getName());
     private final DataRepository dataRepository;
     private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
-    private static final int CHUNK_SIZE = 15000;
+    private static final int CHUNK_SIZE = 25000;
     private static final int MAX_ROWS_PER_SHEET = 1048574;
     private static final String TEMPDIR = "/home/oloo/IdeaProjects/mwm_pms/temp";
 
