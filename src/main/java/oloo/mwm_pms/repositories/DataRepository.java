@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,28 +19,26 @@ import java.util.stream.IntStream;
 public class DataRepository {
 
     final JdbcTemplate jdbcTemplate;
+    final DataSource dataSource;
 
     @Autowired
-    public DataRepository(JdbcTemplate jdbcTemplate) {
+    public DataRepository(JdbcTemplate jdbcTemplate,DataSource dataSource) {
         this.jdbcTemplate = jdbcTemplate;
+       this.dataSource = dataSource;
     }
 
-    public List<String> getTableHeaders(String tableName) {
+    public List<String> getTableHeaders(String tableName, String schemaPattern, String catalogPattern) throws SQLException {
         List<String> headers = new ArrayList<>();
-        String query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS" +
-                "WHERE TABLE_SCHEMA = 'mwm_pms_db' AND TABLE_NAME = ?";
-
-        // Execute the query and process the ResultSet
-        jdbcTemplate.query(query, new Object[]{tableName}, rs -> {
+        try (Connection connection = dataSource.getConnection()) {
+            ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
             while (rs.next()) {
                 headers.add(rs.getString("COLUMN_NAME"));
             }
-        });
-
+        }
         System.out.println(headers);
         return headers;
     }
-}
+
 
 
     public void getTableData(String tableName, int offset, int limit, RowCallbackHandler callbackHandler) {
