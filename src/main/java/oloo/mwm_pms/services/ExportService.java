@@ -130,7 +130,7 @@ public class ExportService {
     }
 
     @Async
-    public void exportSearchResultsToExcelAsync(String table, String searchTerm, String fileId) {
+    public void exportSearchResultsToExcelAsync(String tableName, String searchTerm, String fileId) {
         String tempDir = "/home/oloo/IdeaProjects/mwm_pms/temp";
         System.setProperty("java.io.tmpdir", tempDir);
 
@@ -145,7 +145,7 @@ public class ExportService {
         try (Workbook workbook = new SXSSFWorkbook()) {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
-            List<String> headers = List.of("Employee ID", "Name", "Gender", "Department ID", "Employment Type", "Status"); // Define headers according to your Employee data
+            List<String> headers = dataRepository.getTableHeaders(tableName);
             createHeaderRow(sheet[0], headers);
 
             System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
@@ -156,7 +156,7 @@ public class ExportService {
             while (moreData) {
                 final boolean[] dataAvailable = {false};
 
-                employeeRepository.searchEmployees(searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
+                dataRepository.searchTable(tableName,searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
                     int rowCounter = sheet[0].getLastRowNum() + 1;
 
