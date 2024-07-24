@@ -27,7 +27,9 @@ public class DataRepository {
        this.dataSource = dataSource;
     }
 
-    public List<String> getTableHeaders(String tableName, String schemaPattern, String catalogPattern) throws SQLException {
+    public List<String> getTableHeaders(String tableName) throws SQLException {
+        String schemaPattern = null;
+        String catalogPattern = null;
         List<String> headers = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
