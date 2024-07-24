@@ -44,6 +44,7 @@ public class DataRepository {
     }
 
     public void searchTable(String tableName, List<String> headers, Object searchTerm, int page, int size, RowCallbackHandler callbackHandler) {
+        System.out.println(headers);
         int offset = (page - 1) * size;
         String searchPattern = "%" + searchTerm + "%";
 

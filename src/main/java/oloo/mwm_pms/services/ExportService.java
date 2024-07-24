@@ -60,6 +60,7 @@ public class ExportService {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
             List<String> headers = dataRepository.getTableHeaders(tableName);
+            System.out.println(headers);
             createHeaderRow(sheet[0], headers);
 
             System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
