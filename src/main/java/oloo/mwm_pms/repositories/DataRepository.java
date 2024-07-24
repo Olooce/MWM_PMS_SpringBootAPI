@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 @Repository
 public class DataRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public DataRepository(JdbcTemplate jdbcTemplate) {
@@ -28,7 +28,7 @@ public class DataRepository {
 
     public List<String> getTableHeaders(String tableName) {
         List<String> headers = new ArrayList<>();
-        String query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS " +
+        String query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS" +
                 "WHERE TABLE_SCHEMA = 'mwm_pms_db' AND TABLE_NAME = ?";
 
         // Execute the query and process the ResultSet
