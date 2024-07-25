@@ -111,12 +111,12 @@ public class ExportService {
 
     private void processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, RowProcessor rowProcessor) throws SQLException, IOException {
         final long[] totalRowsCreated = {0};
-        final long[] startTime = {System.currentTimeMillis()};
-        final long[] currentTime = {startTime[0]};
+        final long startTime = System.currentTimeMillis();
+        final long[] currentTime = {startTime};
         final long[] elapsedTime = new long[1];
 
         final int[] sheetIndex = {0};
-        Sheet[] sheet = {createNewSheet(workbook, sheetIndex[0], tableName)};
+        final Sheet[] sheet = {createNewSheet(workbook, sheetIndex[0], tableName)};
         List<String> headers = dataRepository.getTableHeaders(tableName);
         String primaryKey = dataRepository.getPrimaryKey(tableName);
         createHeaderRow(sheet[0], headers);
@@ -129,58 +129,61 @@ public class ExportService {
             final boolean[] dataAvailable = {false};
             final int initialRowCounter = sheet[0].getLastRowNum() + 1;
             final int[] rowCounter = {initialRowCounter};
-            if(searchTerm != null){
+
+            // Process search or table data based on the presence of a search term
+            if (searchTerm != null) {
                 dataRepository.searchTable(tableName, primaryKey, headers, searchTerm, offset, CHUNK_SIZE, rs -> {
-                    if (rs.next()) {
-                        rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
-                        if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
-                            try {
+                    try {
+                        while (rs.next()) {
+                            rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
+                            dataAvailable[0] = true;
+
+                            // Check if we need to create a new sheet
+                            if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
                                 disposeRows(sheet[0]);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                sheetIndex[0]++;
+                                sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                                createHeaderRow(sheet[0], headers);
+                                rowCounter[0] = 0;
                             }
-                            sheetIndex[0]++;
-                            sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
-                            createHeaderRow(sheet[0], headers);
-                            rowCounter[0] = 1;
+                            totalRowsCreated[0]++;
+                            if (totalRowsCreated[0] % 1000 == 0) {
+                                logProgress(totalRowsCreated[0], startTime, currentTime, elapsedTime);
+                            }
                         }
-                        totalRowsCreated[0]++;
-                        if (totalRowsCreated[0] % 100000 == 0) {
-                            logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
-                        }
-                        dataAvailable[0] = true;
-                    } else {
-                        dataAvailable[0] = false;
+                    } catch (SQLException | IOException e) {
+                        throw new RuntimeException(e);
                     }
                 });
-            }else {
+            } else {
                 dataRepository.getTableData(tableName, primaryKey, offset, CHUNK_SIZE, rs -> {
-                    if (rs.next()) {
-                        rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
-                        if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
-                            try {
+                    try {
+                        while (rs.next()) {
+                            rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
+                            dataAvailable[0] = true;
+
+                            // Check if we need to create a new sheet
+                            if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
                                 disposeRows(sheet[0]);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                sheetIndex[0]++;
+                                sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                                createHeaderRow(sheet[0], headers);
+                                rowCounter[0] = 0;
                             }
-                            sheetIndex[0]++;
-                            sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
-                            createHeaderRow(sheet[0], headers);
-                            rowCounter[0] = 1;
+                            totalRowsCreated[0]++;
+                            if (totalRowsCreated[0] % 1000 == 0) {
+                                logProgress(totalRowsCreated[0], startTime, currentTime, elapsedTime);
+                            }
                         }
-                        totalRowsCreated[0]++;
-                        if (totalRowsCreated[0] % 1000 == 0) {
-                            logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
-                        }
-                        dataAvailable[0] = true;
-                    } else {
-                        dataAvailable[0] = false;
+                    } catch (SQLException | IOException e) {
+                        throw new RuntimeException(e);
                     }
                 });
             }
 
+            // Update offset and check if more data is available
             offset += CHUNK_SIZE;
-            moreData = dataAvailable[0] && rowCounter[0] > initialRowCounter;
+            moreData = dataAvailable[0];
         }
 
         finalizeExportJob(exportJob, totalRowsCreated[0]);
@@ -205,7 +208,9 @@ public class ExportService {
     }
 
     private Sheet createNewSheet(Workbook workbook, int sheetIndex, String tableName) {
+        LOGGER.info("Creating sheet: "+sheetIndex+1);
         return workbook.createSheet("Sheet " + (sheetIndex + 1));
+
     }
 
     private void createHeaderRow(Sheet sheet, List<String> headers) {
