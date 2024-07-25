@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/systemusers")
 public class SystemUserController {
@@ -24,22 +27,38 @@ public class SystemUserController {
                                                     @RequestParam(defaultValue = "10") int size) {
        return systemUserService.getAllSystemUsers(page, size);
     }
-    @PostMapping("/auth")
-    public ResponseEntity<String> authenticateUser(@RequestBody AuthRequest authRequest) {
-        // Extract username and password from the AuthRequest object
+    @PostMapping
+    public ResponseEntity<String> authenticateUser(
+            @RequestBody AuthRequest authRequest,
+            HttpServletResponse response) {
+
         String username = authRequest.getUsername();
         String password = authRequest.getPassword();
 
-        // Find the user by username
         SystemUser user = systemUserService.findByUsername(username);
 
-        // If user not found or password doesn't match, return unsuccessful authentication status
         if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        // Return successful authentication status
+        // Generate a session token (or use JWT)
+        String sessionToken = generateSessionToken(user);
+
+        // Create a cookie with the session token
+        Cookie sessionCookie = new Cookie("SESSIONID", sessionToken);
+        sessionCookie.setHttpOnly(true);
+        sessionCookie.setSecure(true); // Set to true in production
+        sessionCookie.setPath("/");
+        sessionCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+
+        // Add the cookie to the response
+        response.addCookie(sessionCookie);
+
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private String generateSessionToken(SystemUser user) {
+        return "generated_session_token";
     }
 
 
