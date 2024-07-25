@@ -20,8 +20,8 @@ public class ExportJobRepository {
 
     // Save a new ExportJob record
     public void save(ExportJob exportJob) {
-        String sql = "INSERT INTO exports (export_id, file_id, file_name, total_rows, file_size, error_message, status, time_initiated, time_completed, last_access_time, file_path, date_created, date_modified) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO exports (export_id, file_id, file_name, total_rows, file_size, error_message, status, time_initiated, time_completed, last_access_time, file_path) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 exportJob.getExportId(),
                 exportJob.getFileId(),
@@ -33,15 +33,14 @@ public class ExportJobRepository {
                 exportJob.getTimeInitiated(),
                 exportJob.getTimeCompleted(),
                 exportJob.getLastAccessTime(),
-                exportJob.getFilePath(),
-                exportJob.getDateCreated(),
-                exportJob.getDateModified()
+                exportJob.getFilePath()
+
         );
     }
 
     // Update an existing ExportJob record
     public void update(ExportJob exportJob) {
-        String sql = "UPDATE exports SET file_id = ?, file_name = ?, total_rows = ?, file_size = ?, error_message = ?, status = ?, time_initiated = ?, time_completed = ?, last_access_time = ?, file_path = ?, date_created = ?, date_modified = ? " +
+        String sql = "UPDATE exports SET file_id = ?, file_name = ?, total_rows = ?, file_size = ?, error_message = ?, status = ?, time_initiated = ?, time_completed = ?, last_access_time = ?, file_path = ?" +
                 "WHERE export_id = ?";
         jdbcTemplate.update(sql,
                 exportJob.getFileId(),
@@ -54,9 +53,7 @@ public class ExportJobRepository {
                 exportJob.getTimeCompleted(),
                 exportJob.getLastAccessTime(),
                 exportJob.getFilePath(),
-                exportJob.getDateCreated(),
-                exportJob.getDateModified(),
-                exportJob.getExportId()
+                exportJob.getDateCreated()
         );
     }
 
