@@ -28,10 +28,7 @@ public class SystemUserController {
        return systemUserService.getAllSystemUsers(page, size);
     }
     @PostMapping("/auth")
-    public ResponseEntity<String> authenticateUser(
-            @RequestBody AuthRequest authRequest,
-            HttpServletResponse response) {
-
+    public ResponseEntity<String> authenticateUser(@RequestBody AuthRequest authRequest) {
         String username = authRequest.getUsername();
         String password = authRequest.getPassword();
 
@@ -40,23 +37,41 @@ public class SystemUserController {
         if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
-        String sessionToken = generateSessionToken(user);
-
-        Cookie sessionCookie = new Cookie("SESSIONID", sessionToken);
-        sessionCookie.setHttpOnly(true);
-        sessionCookie.setSecure(true); // Set to true in production
-        sessionCookie.setPath("/");
-        sessionCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-
-        response.addCookie(sessionCookie);
-
+        
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private String generateSessionToken(SystemUser user) {
-        return "generated_session_token";
     }
 
 
 }
+
+
+//@PostMapping("/auth")
+//public ResponseEntity<String> authenticateUser(
+//        @RequestBody AuthRequest authRequest,
+//        HttpServletResponse response) {
+//
+//    String username = authRequest.getUsername();
+//    String password = authRequest.getPassword();
+//
+//    SystemUser user = systemUserService.findByUsername(username);
+//
+//    if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
+//        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//    }
+//
+//    String sessionToken = generateSessionToken(user);
+//
+//    Cookie sessionCookie = new Cookie("SESSIONID", sessionToken);
+//    sessionCookie.setHttpOnly(true);
+//    sessionCookie.setSecure(true); // Set to true in production
+//    sessionCookie.setPath("/");
+//    sessionCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+//
+//    response.addCookie(sessionCookie);
+//
+//    return new ResponseEntity<>(HttpStatus.OK);
+//}
+//
+//private String generateSessionToken(SystemUser user) {
+//    return "generated_session_token";
+//}
