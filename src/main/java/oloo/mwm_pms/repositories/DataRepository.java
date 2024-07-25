@@ -65,12 +65,29 @@ public class DataRepository {
         return tableName != null && tableName.matches("[a-zA-Z0-9_]+");
     }
 
+    public String getPK(String tableName)  throws SQLException{
+        if (!isValidTableName(tableName)) {
+            throw new SQLException("Invalid table name.");
+        }
 
+        String query = String.format("SELECT * FROM %s LIMIT 1", tableName);
+        try (Connection conn = dataSource.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rset = st.executeQuery(query)) {
 
-    public void getTableData(String tableName, int offset, int limit, RowCallbackHandler callbackHandler) {
-        String query = String.format("SELECT * FROM %s LIMIT %d OFFSET %d", tableName, limit, offset);
+            ResultSetMetaData md = rset.getPrimaryKeys();
+            for (int i = 1; i <= md.getColumnCount(); i++) {
+                headers.add(md.getColumnLabel(i));
+            }
+        }
+    }
+
+    public void getTableData(String tableName,String primaryKey, int offset, int limit, RowCallbackHandler callbackHandler) {
+        String query = String.format("SELECT * FROM %s ORDER BY %s LIMIT %d OFFSET %d", tableName,primaryKey,limit, offset);
         jdbcTemplate.query(query, callbackHandler);
     }
+
+
 
     public void searchTable(String tableName, List<String> headers, Object searchTerm, int page, int size, RowCallbackHandler callbackHandler) {
         int offset = (page - 1) * size;
@@ -107,5 +124,6 @@ public class DataRepository {
         System.arraycopy(elements, 0, result, array.length, elements.length);
         return result;
     }
+
 
 }

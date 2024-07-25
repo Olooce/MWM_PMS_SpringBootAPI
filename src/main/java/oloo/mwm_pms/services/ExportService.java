@@ -72,7 +72,7 @@ public class ExportService {
             while (moreData) {
                 final boolean[] dataAvailable = {false};
 
-                dataRepository.getTableData(tableName, offset, CHUNK_SIZE, new RowCallbackHandler() {
+                dataRepository.getTableData(tableName,dataRepository.getPK(tableName), offset, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
                     int rowCounter = sheet[0].getLastRowNum() + 1;
 
