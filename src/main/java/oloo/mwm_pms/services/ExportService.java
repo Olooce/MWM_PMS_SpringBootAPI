@@ -162,6 +162,14 @@ public class ExportService {
         final long[] currentTime = {startTime};
         final long[] elapsedTime = new long[1];
 
+        ExportJob exportJob = new ExportJob();
+        exportJob.setFileId(fileId);
+        exportJob.setFilePath(fileStorageLocation.resolve(fileId + ".xlsx").toString());
+        exportJob.setFileName(fileId + ".xlsx");
+        exportJob.setStatus("IN_PROGRESS");
+        exportJob.setTimeInitiated(new Date());
+        exportJobRepository.save(exportJob);
+
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
 
         final long[] totalRowsCreated = {0};
@@ -233,12 +241,23 @@ public class ExportService {
                 fos.close();
                 workbook.close();
             }
+
+            exportJob.setTotalRows(totalRowsCreated[0]);
+            exportJob.setFileSize(file.length());
+            exportJob.setStatus("COMPLETED");
+            exportJob.setTimeCompleted(new Date());
+            exportJobRepository.save(exportJob);
+
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
             currentTime[0] = System.currentTimeMillis();
             elapsedTime[0] = (currentTime[0] - startTime) / 1000;
             System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
+            exportJob.setStatus("FAILED");
+            exportJob.setErrorMessage(e.getMessage());
+            exportJob.setTimeCompleted(new Date());
+            exportJobRepository.save(exportJob);
         }
     }
 
