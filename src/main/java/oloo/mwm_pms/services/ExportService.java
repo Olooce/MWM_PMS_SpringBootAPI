@@ -93,7 +93,7 @@ public class ExportService {
     private void processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
         processData(tableName, null, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
-            dataAvailable[0] = true;
+            dataAvailable[0] = false;
         });
     }
 
@@ -121,7 +121,8 @@ public class ExportService {
         while (moreData) {
             final Map<String, Integer> columnNameIndexMap = new HashMap<>();
             final boolean[] dataAvailable = {false};
-            final int[] rowCounter = {sheet[0].getLastRowNum() + 1};
+            final int initialRowCounter = sheet[0].getLastRowNum() + 1;
+            final int[] rowCounter = {initialRowCounter};
 
             dataRepository.getTableData(tableName, dataRepository.getPrimaryKey(tableName), offset, CHUNK_SIZE, rs -> {
                 rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
