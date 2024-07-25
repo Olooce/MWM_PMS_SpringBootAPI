@@ -241,7 +241,7 @@ public class ExportService {
         exportJob.setFileSize(file.length());
         exportJob.setStatus("COMPLETED");
         exportJob.setTimeCompleted(LocalDateTime.now());
-        exportJobRepository.save(exportJob);
+        exportJobRepository.update(exportJob);
     }
 
     private void logProgress(long totalRowsCreated, long startTime, long[] currentTime, long[] elapsedTime) {
@@ -254,7 +254,7 @@ public class ExportService {
     private void handleExportError(ExportJob exportJob, Exception e) {
         LOGGER.log(Level.SEVERE, "Error during export", e);
         exportJob.setStatus("FAILED");
-        exportJobRepository.save(exportJob);
+        exportJobRepository.update(exportJob);
     }
 
     private void cleanupTempFiles() {
