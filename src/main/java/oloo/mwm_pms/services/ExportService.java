@@ -208,6 +208,8 @@ public class ExportService {
 
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
+                fos.close();
+                workbook.close();
             }
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
             currentTime[0] = System.currentTimeMillis();
