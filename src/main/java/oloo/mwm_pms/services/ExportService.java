@@ -56,7 +56,7 @@ public class ExportService {
     public void exportTableToExcelAsync(String tableName, String fileId) {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
-        try (Workbook workbook = new SXSSFWorkbook()) {
+        try (Workbook workbook = new SXSSFWorkbook(1000)) {
             processTableData(tableName, workbook, exportJob);
             writeWorkbookToFile(workbook, exportJob);
         } catch (IOException | SQLException e) {
@@ -70,7 +70,7 @@ public class ExportService {
     public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId) {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
-        try (Workbook workbook = new SXSSFWorkbook()) {
+        try (Workbook workbook = new SXSSFWorkbook(1000)) {
             processSearchResults(tableName, searchTerm, workbook, exportJob);
             writeWorkbookToFile(workbook, exportJob);
         } catch (IOException | SQLException e) {
