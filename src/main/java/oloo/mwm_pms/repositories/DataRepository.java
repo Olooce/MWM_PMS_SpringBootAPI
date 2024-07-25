@@ -25,40 +25,40 @@ public class DataRepository {
        this.dataSource = dataSource;
     }
 
-//    public List<String> getTableHeaders(String tableName) throws SQLException {
-//        String schemaPattern = null;
-//        String catalogPattern = null;
-//        List<String> headers = new ArrayList<>();
-//        try (Connection connection = dataSource.getConnection()) {
-//            ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
-//            while (rs.next()) {
-//                headers.add(rs.getString("COLUMN_NAME"));
-//            }
-//        }
-//        System.out.println(headers);
-//        return headers;
-//    }
-
     public List<String> getTableHeaders(String tableName) throws SQLException {
+        String schemaPattern = null;
+        String catalogPattern = null;
         List<String> headers = new ArrayList<>();
-
-        if (!isValidTableName(tableName)) {
-            throw new SQLException("Invalid table name.");
-        }
-
-        String query = String.format("SELECT * FROM %s LIMIT 1", tableName);
-        try (Connection conn = dataSource.getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rset = st.executeQuery(query)) {
-
-            ResultSetMetaData md = rset.getMetaData();
-            for (int i = 1; i <= md.getColumnCount(); i++) {
-                headers.add(md.getColumnLabel(i));
+        try (Connection connection = dataSource.getConnection()) {
+            ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
+            while (rs.next()) {
+                headers.add(rs.getString("COLUMN_NAME"));
             }
         }
-//        System.out.println(headers);
+        System.out.println(headers);
         return headers;
     }
+
+//    public List<String> getTableHeaders(String tableName) throws SQLException {
+//        List<String> headers = new ArrayList<>();
+//
+//        if (!isValidTableName(tableName)) {
+//            throw new SQLException("Invalid table name.");
+//        }
+//
+//        String query = String.format("SELECT * FROM %s LIMIT 1", tableName);
+//        try (Connection conn = dataSource.getConnection();
+//             Statement st = conn.createStatement();
+//             ResultSet rset = st.executeQuery(query)) {
+//
+//            ResultSetMetaData md = rset.getMetaData();
+//            for (int i = 1; i <= md.getColumnCount(); i++) {
+//                headers.add(md.getColumnLabel(i));
+//            }
+//        }
+////        System.out.println(headers);
+//        return headers;
+//    }
 
     private boolean isValidTableName(String tableName) {
         // Sanitize to avoid SQL Injection, check for null, empty, non-alphanumeric characters, etc.
