@@ -13,9 +13,9 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import oloo.mwm_pms.repositories.DataRepository;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -60,6 +60,8 @@ public class ExportService {
             writeWorkbookToFile(workbook, exportJob);
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
+        } finally {
+            cleanupTempFiles();
         }
     }
 
@@ -72,6 +74,8 @@ public class ExportService {
             writeWorkbookToFile(workbook, exportJob);
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
+        } finally {
+            cleanupTempFiles();
         }
     }
 
@@ -179,7 +183,7 @@ public class ExportService {
 
     private void createHeaderRow(Sheet sheet, List<String> headers) {
         Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < headers.size(); i++) {
+        for (int i = 0; headers != null && i < headers.size(); i++) {
             headerRow.createCell(i).setCellValue(headers.get(i));
         }
     }
@@ -194,11 +198,9 @@ public class ExportService {
         ((SXSSFSheet) sheet).flushRows();
     }
 
-
     private void writeWorkbookToFile(Workbook workbook, ExportJob exportJob) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(exportJob.getFilePath())) {
             workbook.write(fos);
-            workbook.close();
         }
     }
 
@@ -214,29 +216,40 @@ public class ExportService {
     private void logProgress(long totalRowsCreated, long startTime, long[] currentTime, long[] elapsedTime) {
         currentTime[0] = System.currentTimeMillis();
         elapsedTime[0] = (currentTime[0] - startTime) / 1000;
-        System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
-        System.out.println("Total rows created: " + totalRowsCreated);
+        LOGGER.info(String.format("Elapsed Time: %dH %dM %dS", elapsedTime[0] / 3600, (elapsedTime[0] % 3600) / 60, elapsedTime[0] % 60));
+        LOGGER.info("Total rows created: " + totalRowsCreated);
     }
 
     private void handleExportError(ExportJob exportJob, Exception e) {
-        LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
+        LOGGER.log(Level.SEVERE, "Error during export", e);
         exportJob.setStatus("FAILED");
-        exportJob.setErrorMessage(e.getMessage());
-        exportJob.setTimeCompleted(LocalDateTime.now());
         exportJobRepository.save(exportJob);
     }
 
-    public Resource loadFileAsResource(String fileId) throws Exception {
-        Path filePath = fileStorageLocation.resolve(fileId + ".xlsx").normalize();
-        Resource resource = new UrlResource(filePath.toUri());
-        if (resource.exists()) {
-            return resource;
-        } else {
-            throw new Exception("File not found " + fileId);
+    private void cleanupTempFiles() {
+        File tempDir = new File(TEMPDIR);
+        if (tempDir.exists() && tempDir.isDirectory()) {
+            File[] files = tempDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.delete()) {
+                        LOGGER.warning("Failed to delete temporary file: " + file.getPath());
+                    }
+                }
+            }
         }
     }
 
-    @FunctionalInterface
+    public Resource loadFileAsResource(String fileId) throws IOException {
+        Path filePath = fileStorageLocation.resolve(fileId).normalize();
+        Resource resource = new UrlResource(filePath.toUri());
+        if (resource.exists() && resource.isReadable()) {
+            return resource;
+        } else {
+            throw new FileNotFoundException("File not found " + fileId);
+        }
+    }
+
     private interface RowProcessor {
         void processRow(ResultSet rs, List<String> headers, Map<String, Integer> columnNameIndexMap, int[] rowCounter, Sheet sheet, boolean[] dataAvailable) throws SQLException;
     }
