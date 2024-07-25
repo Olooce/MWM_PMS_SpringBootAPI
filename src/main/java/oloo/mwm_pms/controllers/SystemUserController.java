@@ -27,7 +27,7 @@ public class SystemUserController {
                                                     @RequestParam(defaultValue = "10") int size) {
        return systemUserService.getAllSystemUsers(page, size);
     }
-    @PostMapping
+    @PostMapping("/auth")
     public ResponseEntity<String> authenticateUser(
             @RequestBody AuthRequest authRequest,
             HttpServletResponse response) {
