@@ -65,21 +65,21 @@ public class DataRepository {
         return tableName != null && tableName.matches("[a-zA-Z0-9_]+");
     }
 
-    public String getPK(String tableName)  throws SQLException{
+    public String getPrimaryKey(String tableName) throws SQLException {
         if (!isValidTableName(tableName)) {
             throw new SQLException("Invalid table name.");
         }
 
-        String query = String.format("SELECT * FROM %s LIMIT 1", tableName);
-        try (Connection conn = dataSource.getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rset = st.executeQuery(query)) {
-
-            ResultSetMetaData md = rset.getPrimaryKeys();
-            for (int i = 1; i <= md.getColumnCount(); i++) {
-                headers.add(md.getColumnLabel(i));
+        try (Connection conn = dataSource.getConnection()) {
+            DatabaseMetaData metaData = conn.getMetaData();
+            try (ResultSet pkResultSet = metaData.getPrimaryKeys(null, null, tableName)) {
+                if (pkResultSet.next()) {
+                    System.out.println(pkResultSet.getString("COLUMN_NAME"));
+                    return pkResultSet.getString("COLUMN_NAME");
+                }
             }
         }
+        return null; // Or throw an exception if no primary key is found
     }
 
     public void getTableData(String tableName,String primaryKey, int offset, int limit, RowCallbackHandler callbackHandler) {
