@@ -126,8 +126,7 @@ public class ExportService {
         while (moreData) {
             final Map<String, Integer> columnNameIndexMap = new HashMap<>();
             final boolean[] dataAvailable = {false};
-            final int initialRowCounter = sheet[0].getLastRowNum() + 1;
-            final int[] rowCounter = {initialRowCounter};
+            final int[] rowCounter = {sheet[0].getLastRowNum() + 1};
 
             // Process search or table data based on the presence of a search term
             if (searchTerm != null) {
@@ -143,7 +142,7 @@ public class ExportService {
                                 sheetIndex[0]++;
                                 sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
                                 createHeaderRow(sheet[0], headers);
-                                rowCounter[0] = 0;
+                                rowCounter[0] = 1; // Reset rowCounter after new sheet creation
                             }
                             totalRowsCreated[0]++;
                             if (totalRowsCreated[0] % 1000 == 0) {
@@ -167,10 +166,10 @@ public class ExportService {
                                 sheetIndex[0]++;
                                 sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
                                 createHeaderRow(sheet[0], headers);
-                                rowCounter[0] = 0;
+                                rowCounter[0] = 1; // Reset rowCounter after new sheet creation
                             }
                             totalRowsCreated[0]++;
-                            if (totalRowsCreated[0] % 100000 == 0) {
+                            if (totalRowsCreated[0] % 1000 == 0) {
                                 logProgress(totalRowsCreated[0], startTime, currentTime, elapsedTime);
                             }
                         }
@@ -188,6 +187,7 @@ public class ExportService {
         finalizeExportJob(exportJob, totalRowsCreated[0]);
         System.out.println(exportJob);
     }
+
 
     private void createExcelRow(ResultSet rs, List<String> headers, Map<String, Integer> columnNameIndexMap, int[] rowCounter, Sheet sheet) throws SQLException {
         if (columnNameIndexMap.isEmpty()) {
