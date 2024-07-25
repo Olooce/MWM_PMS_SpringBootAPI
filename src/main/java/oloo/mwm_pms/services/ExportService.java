@@ -134,6 +134,8 @@ public class ExportService {
 
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
+                fos.close();
+                workbook.close();
             }
 //            exportJob.setTotalRows(totalRowsCreated[0]);
 //            exportJob.setFileSize(file.length());
