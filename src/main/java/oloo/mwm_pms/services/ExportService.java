@@ -225,8 +225,8 @@ public class ExportService {
                         }
 
                         totalRowsCreated[0]++;
-                        dataAvailable[0] = true; // Indicate that data was processed
-                        if (totalRowsCreated[0] % 100000 == 0) {  // Print every 100,000 rows
+                        dataAvailable[0] = true;
+                        if (totalRowsCreated[0] % 100000 == 0) {  
                             currentTime[0] = System.currentTimeMillis();
                             elapsedTime[0] = (currentTime[0] - startTime) / 1000;
                             System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
