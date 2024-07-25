@@ -10,6 +10,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import oloo.mwm_pms.repositories.DataRepository;
@@ -117,6 +118,7 @@ public class ExportService {
         final int[] sheetIndex = {0};
         Sheet[] sheet = {createNewSheet(workbook, sheetIndex[0], tableName)};
         List<String> headers = dataRepository.getTableHeaders(tableName);
+        String primaryKey = dataRepository.getPrimaryKey(tableName);
         createHeaderRow(sheet[0], headers);
 
         int offset = 0;
@@ -127,30 +129,55 @@ public class ExportService {
             final boolean[] dataAvailable = {false};
             final int initialRowCounter = sheet[0].getLastRowNum() + 1;
             final int[] rowCounter = {initialRowCounter};
-
-            dataRepository.getTableData(tableName, dataRepository.getPrimaryKey(tableName), offset, CHUNK_SIZE, rs -> {
-                if (rs.next()) {
-                    rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
-                    if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
-                        try {
-                            disposeRows(sheet[0]);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+            if(searchTerm != null){
+dataRepository.searchTable(tableName, primaryKey, headers, searchTerm, offset, CHUNK_SIZE, rs -> {
+    if (rs.next()) {
+        rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
+        if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
+            try {
+                disposeRows(sheet[0]);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            sheetIndex[0]++;
+            sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+            createHeaderRow(sheet[0], headers);
+            rowCounter[0] = 1;
+        }
+        totalRowsCreated[0]++;
+        if (totalRowsCreated[0] % 100000 == 0) {
+            logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
+        }
+        dataAvailable[0] = true;
+    } else {
+        dataAvailable[0] = false;
+    }
+});
+            }else {
+                dataRepository.getTableData(tableName, primaryKey, offset, CHUNK_SIZE, rs -> {
+                    if (rs.next()) {
+                        rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
+                        if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
+                            try {
+                                disposeRows(sheet[0]);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            sheetIndex[0]++;
+                            sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                            createHeaderRow(sheet[0], headers);
+                            rowCounter[0] = 1;
                         }
-                        sheetIndex[0]++;
-                        sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
-                        createHeaderRow(sheet[0], headers);
-                        rowCounter[0] = 1;
+                        totalRowsCreated[0]++;
+                        if (totalRowsCreated[0] % 100000 == 0) {
+                            logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
+                        }
+                        dataAvailable[0] = true;
+                    } else {
+                        dataAvailable[0] = false;
                     }
-                    totalRowsCreated[0]++;
-                    if (totalRowsCreated[0] % 100000 == 0) {
-                        logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
-                    }
-                    dataAvailable[0] = true;
-                } else {
-                    dataAvailable[0] = false;
-                }
-            });
+                });
+            }
 
             offset += CHUNK_SIZE;
             moreData = dataAvailable[0] && rowCounter[0] > initialRowCounter;
