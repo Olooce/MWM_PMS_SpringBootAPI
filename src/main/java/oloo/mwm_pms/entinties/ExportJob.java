@@ -1,13 +1,12 @@
 package oloo.mwm_pms.entinties;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 public class ExportJob {
     private LocalDateTime timeInitiated;
     private String fileId;
     private String fileName;
-    private long size;
+    private long fileSize;
     private long totalRows;
     private String errorMessage;
     private String status;
@@ -23,8 +22,8 @@ public class ExportJob {
         this.fileId = fileId;
     }
 
-    public void setFilePath(String string) {
-        this.fileName = string;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public void setFileName(String fileName) {
@@ -44,7 +43,7 @@ public class ExportJob {
     }
 
     public void setFileSize(long fileSize) {
-        this.size = fileSize;
+        this.fileSize = fileSize;
     }
 
     public void setTimeCompleted(LocalDateTime timeCompleted) {

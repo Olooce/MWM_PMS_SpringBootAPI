@@ -169,7 +169,7 @@ public class ExportService {
                             rowCounter[0] = 1;
                         }
                         totalRowsCreated[0]++;
-                        if (totalRowsCreated[0] % 100000 == 0) {
+                        if (totalRowsCreated[0] % 1000 == 0) {
                             logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
                         }
                         dataAvailable[0] = true;
