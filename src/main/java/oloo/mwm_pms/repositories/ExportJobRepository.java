@@ -20,10 +20,9 @@ public class ExportJobRepository {
 
     // Save a new ExportJob record
     public void save(ExportJob exportJob) {
-        String sql = "INSERT INTO exports (export_id, file_id, file_name, total_rows, file_size, error_message, status, time_initiated, time_completed, last_access_time, file_path) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO exports (file_id, file_name, total_rows, file_size, error_message, status, time_initiated, time_completed, last_access_time, file_path) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
-                exportJob.getExportId(),
                 exportJob.getFileId(),
                 exportJob.getFileName(),
                 exportJob.getTotalRows(),
@@ -40,10 +39,9 @@ public class ExportJobRepository {
 
     // Update an existing ExportJob record
     public void update(ExportJob exportJob) {
-        String sql = "UPDATE exports SET file_id = ?, file_name = ?, total_rows = ?, file_size = ?, error_message = ?, status = ?, time_initiated = ?, time_completed = ?, last_access_time = ?, file_path = ?" +
-                "WHERE export_id = ?";
+        String sql = "UPDATE exports SET file_name = ?, total_rows = ?, file_size = ?, error_message = ?, status = ?, time_initiated = ?, time_completed = ?, last_access_time = ?, file_path = ?" +
+                "WHERE file_id = ?";
         jdbcTemplate.update(sql,
-                exportJob.getFileId(),
                 exportJob.getFileName(),
                 exportJob.getTotalRows(),
                 exportJob.getFileSize(),
@@ -53,7 +51,7 @@ public class ExportJobRepository {
                 exportJob.getTimeCompleted(),
                 exportJob.getLastAccessTime(),
                 exportJob.getFilePath(),
-                exportJob.getDateCreated()
+                exportJob.getFileId()
         );
     }
 
