@@ -223,10 +223,7 @@ public class ExportService {
         for (int i = 0; i < headers.size(); i++) {
             headerRow.createCell(i).setCellValue(headers.get(i));
         }
-    }
-
-
-    public Resource loadFileAsResource(String fileId) throws Exception {
+    }    public Resource loadFileAsResource(String fileId) throws Exception {
         Path filePath = fileStorageLocation.resolve(fileId + ".xlsx").normalize();
         Resource resource = new UrlResource(filePath.toUri());
         if (resource.exists()) {
