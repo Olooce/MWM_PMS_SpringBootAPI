@@ -26,6 +26,7 @@ public class BranchRepository {
         );
     }
 
+
     public int count() {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM branches", Integer.class);
     }

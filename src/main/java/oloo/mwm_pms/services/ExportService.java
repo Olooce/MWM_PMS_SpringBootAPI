@@ -186,6 +186,7 @@ public class ExportService {
         }
 
         finalizeExportJob(exportJob, totalRowsCreated[0]);
+        System.out.println(exportJob);
     }
 
     private void createExcelRow(ResultSet rs, List<String> headers, Map<String, Integer> columnNameIndexMap, int[] rowCounter, Sheet sheet) throws SQLException {
@@ -241,6 +242,7 @@ public class ExportService {
         exportJob.setFileSize(file.length());
         exportJob.setStatus("COMPLETED");
         exportJob.setTimeCompleted(LocalDateTime.now());
+        System.out.println(exportJob.getStatus());
         exportJobRepository.update(exportJob);
     }
 
