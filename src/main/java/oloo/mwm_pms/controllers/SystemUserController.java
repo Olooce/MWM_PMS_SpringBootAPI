@@ -41,17 +41,14 @@ public class SystemUserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        // Generate a session token (or use JWT)
         String sessionToken = generateSessionToken(user);
 
-        // Create a cookie with the session token
         Cookie sessionCookie = new Cookie("SESSIONID", sessionToken);
         sessionCookie.setHttpOnly(true);
         sessionCookie.setSecure(true); // Set to true in production
         sessionCookie.setPath("/");
         sessionCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
 
-        // Add the cookie to the response
         response.addCookie(sessionCookie);
 
         return new ResponseEntity<>(HttpStatus.OK);
