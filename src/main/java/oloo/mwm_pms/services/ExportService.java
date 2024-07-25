@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class ExportService {
         exportJob.setFilePath(fileStorageLocation.resolve(fileId + ".xlsx").toString());
         exportJob.setFileName(fileId + ".xlsx");
         exportJob.setStatus("IN_PROGRESS");
-        exportJob.setTimeInitiated(new Date());
+        exportJob.setTimeInitiated(new Date().toLocalDateTime());
         exportJobRepository.save(exportJob);
 
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
@@ -137,7 +138,7 @@ public class ExportService {
             exportJob.setTotalRows(totalRowsCreated[0]);
             exportJob.setFileSize(file.length());
             exportJob.setStatus("COMPLETED");
-            exportJob.setTimeCompleted(new Date());
+            exportJob.setTimeCompleted(new LocalDateTime());
             exportJobRepository.save(exportJob);
 
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
@@ -148,7 +149,7 @@ public class ExportService {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
             exportJob.setStatus("FAILED");
             exportJob.setErrorMessage(e.getMessage());
-            exportJob.setTimeCompleted(new Date());
+            exportJob.setTimeCompleted(new LocalDateTime());
             exportJobRepository.save(exportJob);
         }
 
@@ -167,7 +168,7 @@ public class ExportService {
         exportJob.setFilePath(fileStorageLocation.resolve(fileId + ".xlsx").toString());
         exportJob.setFileName(fileId + ".xlsx");
         exportJob.setStatus("IN_PROGRESS");
-        exportJob.setTimeInitiated(new Date());
+        exportJob.setTimeInitiated(new LocalDateTime());
         exportJobRepository.save(exportJob);
 
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
@@ -245,7 +246,7 @@ public class ExportService {
             exportJob.setTotalRows(totalRowsCreated[0]);
             exportJob.setFileSize(file.length());
             exportJob.setStatus("COMPLETED");
-            exportJob.setTimeCompleted(new Date());
+            exportJob.setTimeCompleted(new LocalDateTime());
             exportJobRepository.save(exportJob);
 
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
@@ -256,7 +257,7 @@ public class ExportService {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
             exportJob.setStatus("FAILED");
             exportJob.setErrorMessage(e.getMessage());
-            exportJob.setTimeCompleted(new Date());
+            exportJob.setTimeCompleted(new LocalDateTime());
             exportJobRepository.save(exportJob);
         }
     }
