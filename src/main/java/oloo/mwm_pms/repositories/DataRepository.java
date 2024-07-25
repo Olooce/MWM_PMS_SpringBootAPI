@@ -27,10 +27,10 @@ public class DataRepository {
 
     public List<String> getTableHeaders(String tableName) throws SQLException {
         String schemaPattern = null;
-        String catalogPattern = null;
+        String catalogPattern = "mwm_pms_db";
         List<String> headers = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
-            ResultSet rs = connection.getMetaData().getColumns("mwm_pms_db", schemaPattern, tableName, null);
+            ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
             while (rs.next()) {
                 headers.add(rs.getString("COLUMN_NAME"));
             }
