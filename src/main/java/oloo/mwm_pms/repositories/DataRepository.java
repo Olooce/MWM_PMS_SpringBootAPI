@@ -83,15 +83,14 @@ public class DataRepository {
         return null;
     }
 
-    public void getTableData(String tableName,String primaryKey, int offset, int limit, RowCallbackHandler callbackHandler) {
+    public void getTableData(String tableName,String primaryKey, long offset, long limit, RowCallbackHandler callbackHandler) {
         String query = String.format("SELECT * FROM %s ORDER BY %s LIMIT %d OFFSET %d", tableName,primaryKey,limit, offset);
         jdbcTemplate.query(query, callbackHandler);
     }
 
 
 
-    public void searchTable(String tableName,String primaryKey, List<String> headers, Object searchTerm, int page, int size, RowCallbackHandler callbackHandler) {
-        int offset = (page - 1) * size;
+    public void searchTable(String tableName,String primaryKey, List<String> headers, Object searchTerm, long offset, long limit, RowCallbackHandler callbackHandler) {
         String searchPattern = "%" + searchTerm + "%";
 
         // Check column existence and dynamically build the SQL query
@@ -113,7 +112,7 @@ public class DataRepository {
                 .mapToObj(i -> searchPattern)
                 .toArray();
 
-        params = append(params, size, offset);
+        params = append(params, limit, offset);
 
         try {
             jdbcTemplate.query(sql, params, callbackHandler);

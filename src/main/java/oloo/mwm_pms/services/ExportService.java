@@ -45,7 +45,7 @@ public class ExportService {
     public ExportService(DataRepository dataRepository, ExportJobRepository exportJobRepository) {
         this.dataRepository = dataRepository;
         this.exportJobRepository = exportJobRepository;
-        this.fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
+        this.fileStorageLocation = Paths.get("exported_files").toAbsolutePath();
         File directory = new File(fileStorageLocation.toString());
         if (!directory.exists()) {
             directory.mkdirs();
@@ -130,29 +130,29 @@ public class ExportService {
             final int initialRowCounter = sheet[0].getLastRowNum() + 1;
             final int[] rowCounter = {initialRowCounter};
             if(searchTerm != null){
-dataRepository.searchTable(tableName, primaryKey, headers, searchTerm, offset, CHUNK_SIZE, rs -> {
-    if (rs.next()) {
-        rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
-        if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
-            try {
-                disposeRows(sheet[0]);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            sheetIndex[0]++;
-            sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
-            createHeaderRow(sheet[0], headers);
-            rowCounter[0] = 1;
-        }
-        totalRowsCreated[0]++;
-        if (totalRowsCreated[0] % 100000 == 0) {
-            logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
-        }
-        dataAvailable[0] = true;
-    } else {
-        dataAvailable[0] = false;
-    }
-});
+                dataRepository.searchTable(tableName, primaryKey, headers, searchTerm, offset, CHUNK_SIZE, rs -> {
+                    if (rs.next()) {
+                        rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
+                        if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
+                            try {
+                                disposeRows(sheet[0]);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            sheetIndex[0]++;
+                            sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                            createHeaderRow(sheet[0], headers);
+                            rowCounter[0] = 1;
+                        }
+                        totalRowsCreated[0]++;
+                        if (totalRowsCreated[0] % 100000 == 0) {
+                            logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
+                        }
+                        dataAvailable[0] = true;
+                    } else {
+                        dataAvailable[0] = false;
+                    }
+                });
             }else {
                 dataRepository.getTableData(tableName, primaryKey, offset, CHUNK_SIZE, rs -> {
                     if (rs.next()) {
