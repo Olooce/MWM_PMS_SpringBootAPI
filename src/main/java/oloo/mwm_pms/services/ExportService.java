@@ -1,5 +1,7 @@
 package oloo.mwm_pms.services;
 
+import oloo.mwm_pms.entinties.ExportJob;
+import oloo.mwm_pms.repositories.ExportJobRepository;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +30,7 @@ import java.util.logging.Logger;
 
 @Service
 public class ExportService {
+    ExportJobRepository exportJobRepository;
 
     private static final Logger LOGGER = Logger.getLogger(ExportService.class.getName());
     private final DataRepository dataRepository;
@@ -52,6 +56,14 @@ public class ExportService {
         long startTime = System.currentTimeMillis();
         final long[] currentTime = {startTime};
         final long[] elapsedTime = new long[1];
+
+        ExportJob exportJob = new ExportJob();
+        exportJob.setFileId(fileId);
+        exportJob.setFilePath(fileStorageLocation.resolve(fileId + ".xlsx").toString());
+        exportJob.setFileName(fileId + ".xlsx");
+        exportJob.setStatus("IN_PROGRESS");
+        exportJob.setTimeInitiated(new Date());
+        exportJobRepository.save(exportJob);
 
         File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
 
@@ -122,12 +134,22 @@ public class ExportService {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
             }
+            exportJob.setTotalRows(totalRowsCreated[0]);
+            exportJob.setFileSize(file.length());
+            exportJob.setStatus("COMPLETED");
+            exportJob.setTimeCompleted(new Date());
+            exportJobRepository.save(exportJob);
+
             System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
             currentTime[0] = System.currentTimeMillis();
             elapsedTime[0] = (currentTime[0] - startTime)/1000;
             System.out.println("Elapsed Time: " + elapsedTime[0] /3600+ "H " + (elapsedTime[0] % 3600) /60 + "M " + elapsedTime[0] % 60 + "S");
         } catch (IOException | SQLException e) {
             LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
+            exportJob.setStatus("FAILED");
+            exportJob.setErrorMessage(e.getMessage());
+            exportJob.setTimeCompleted(new Date());
+            exportJobRepository.save(exportJob);
         }
 
     }
