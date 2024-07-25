@@ -80,7 +80,7 @@ public class DataRepository {
                 }
             }
         }
-        return null; // Or throw an exception if no primary key is found
+        return null;
     }
 
     public void getTableData(String tableName,String primaryKey, int offset, int limit, RowCallbackHandler callbackHandler) {
