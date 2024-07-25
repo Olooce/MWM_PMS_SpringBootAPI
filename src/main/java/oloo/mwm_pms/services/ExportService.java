@@ -61,6 +61,7 @@ public class ExportService {
             final int[] sheetIndex = {0};
             final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
             List<String> headers = dataRepository.getTableHeaders(tableName);
+            String primaryKey = dataRepository.getPrimaryKey(tableName);
 //            System.out.println(headers);
 
             createHeaderRow(sheet[0], headers);
@@ -72,7 +73,7 @@ public class ExportService {
             while (moreData) {
                 final boolean[] dataAvailable = {false};
 
-                dataRepository.getTableData(tableName,dataRepository.getPrimaryKey(tableName), offset, CHUNK_SIZE, new RowCallbackHandler() {
+                dataRepository.getTableData(tableName,primaryKey, offset, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
                     int rowCounter = sheet[0].getLastRowNum() + 1;
 
@@ -158,7 +159,7 @@ public class ExportService {
             while (moreData) {
                 final boolean[] dataAvailable = {false};
 
-                dataRepository.searchTable(tableName,primaryKey,headers, searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
+                dataRepository.searchTable(tableName,headers, searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
                     int rowCounter = sheet[0].getLastRowNum() + 1;
 
