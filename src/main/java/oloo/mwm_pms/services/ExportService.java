@@ -10,7 +10,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import oloo.mwm_pms.repositories.DataRepository;
@@ -171,7 +170,7 @@ public class ExportService {
                                 rowCounter[0] = 0;
                             }
                             totalRowsCreated[0]++;
-                            if (totalRowsCreated[0] % 1000 == 0) {
+                            if (totalRowsCreated[0] % 100000 == 0) {
                                 logProgress(totalRowsCreated[0], startTime, currentTime, elapsedTime);
                             }
                         }
