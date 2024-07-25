@@ -71,7 +71,7 @@ public class ExportJob {
         this.lastAccessTime = lastAccessTime;
     }
 
-    public File getFilePath() {
+    public String getFilePath() {
         return filePath;
     }
 }

@@ -90,21 +90,21 @@ public class ExportService {
         return exportJob;
     }
 
-    private void processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException {
+    private void processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
         processData(tableName, null, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
             dataAvailable[0] = true;
         });
     }
 
-    private void processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob) throws SQLException {
+    private void processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
         processData(tableName, searchTerm, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
             dataAvailable[0] = true;
         });
     }
 
-    private void processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, RowProcessor rowProcessor) throws SQLException {
+    private void processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, RowProcessor rowProcessor) throws SQLException, IOException {
         final long[] totalRowsCreated = {0};
         final long[] startTime = {System.currentTimeMillis()};
         final long[] currentTime = {startTime[0]};
@@ -175,14 +175,14 @@ public class ExportService {
         }
     }
 
-    private void disposeRows(Sheet sheet) {
+    private void disposeRows(Sheet sheet) throws IOException {
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
             if (row != null) {
                 sheet.removeRow(row);
             }
         }
-        ((SXSSFSheet) sheet).dispose();
+        ((SXSSFSheet) sheet).flushRows();
     }
 
 
