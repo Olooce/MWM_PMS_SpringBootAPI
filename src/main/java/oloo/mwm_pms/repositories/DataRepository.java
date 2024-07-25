@@ -56,7 +56,7 @@ public class DataRepository {
                 headers.add(md.getColumnLabel(i));
             }
         }
-        System.out.println(headers);
+//        System.out.println(headers);
         return headers;
     }
 
@@ -93,13 +93,11 @@ public class DataRepository {
                 .mapToObj(i -> searchPattern)
                 .toArray();
 
-        // Add pagination parameters
         params = append(params, size, offset);
 
         try {
             jdbcTemplate.query(sql, params, callbackHandler);
         } catch (BadSqlGrammarException e) {
-            // Log or handle the exception
             System.err.println("SQL Error: " + e.getMessage());
         }
     }
