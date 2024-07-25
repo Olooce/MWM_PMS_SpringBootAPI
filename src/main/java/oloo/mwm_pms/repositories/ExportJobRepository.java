@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -28,7 +27,7 @@ public class ExportJobRepository {
                 exportJob.getFileId(),
                 exportJob.getFileName(),
                 exportJob.getTotalRows(),
-                exportJob.getSize(), // Assuming fileSize corresponds to size
+                exportJob.getFileSize(),
                 exportJob.getErrorMessage(),
                 exportJob.getStatus(),
                 exportJob.getTimeInitiated(),
@@ -48,7 +47,7 @@ public class ExportJobRepository {
                 exportJob.getFileId(),
                 exportJob.getFileName(),
                 exportJob.getTotalRows(),
-                exportJob.getSize(), // Assuming fileSize corresponds to size
+                exportJob.getFileSize(),
                 exportJob.getErrorMessage(),
                 exportJob.getStatus(),
                 exportJob.getTimeInitiated(),
@@ -80,7 +79,7 @@ public class ExportJobRepository {
             exportJob.setFileId(rs.getString("file_id"));
             exportJob.setFileName(rs.getString("file_name"));
             exportJob.setTotalRows(rs.getLong("total_rows"));
-            exportJob.setSize(rs.getLong("file_size")); // Assuming fileSize corresponds to size
+            exportJob.setFileSize(rs.getLong("file_size")); // Assuming fileSize corresponds to size
             exportJob.setErrorMessage(rs.getString("error_message"));
             exportJob.setStatus(rs.getString("status"));
             exportJob.setTimeInitiated(rs.getTimestamp("time_initiated").toLocalDateTime());
