@@ -1,4 +1,4 @@
-package oloo.mwm_pms;
+package oloo.mwm_pms.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

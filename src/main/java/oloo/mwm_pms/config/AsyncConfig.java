@@ -1,3 +1,5 @@
+package oloo.mwm_pms.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -12,8 +14,8 @@ public class AsyncConfig {
     @Bean
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(20);
+        executor.setMaxPoolSize(25);
         executor.setQueueCapacity(25);
         executor.setThreadNamePrefix("Async-");
         executor.initialize();
