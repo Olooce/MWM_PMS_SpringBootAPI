@@ -126,6 +126,11 @@ public class ExportService {
             dataRepository.getTableData(tableName, dataRepository.getPrimaryKey(tableName), offset, CHUNK_SIZE, rs -> {
                 rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
                 if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
+                    try {
+                        disposeRows(sheet[0]);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     sheetIndex[0]++;
                     sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
                     createHeaderRow(sheet[0], headers);
@@ -138,9 +143,8 @@ public class ExportService {
             });
 
             offset += CHUNK_SIZE;
-            moreData = dataAvailable[0];
+            moreData = dataAvailable[0] && rowCounter[0] > initialRowCounter;
 
-            disposeRows(sheet[0]);
         }
 
         finalizeExportJob(exportJob, totalRowsCreated[0]);
