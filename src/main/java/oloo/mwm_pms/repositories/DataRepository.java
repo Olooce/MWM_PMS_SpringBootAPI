@@ -30,11 +30,12 @@ public class DataRepository {
         String catalogPattern = null;
         List<String> headers = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
-            ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
+            ResultSet rs = connection.getMetaData().getColumns("mwm_pms_db", schemaPattern, tableName, null);
             while (rs.next()) {
                 headers.add(rs.getString("COLUMN_NAME"));
             }
         }
+        System.out.println(tableName);
         System.out.println(headers);
         return headers;
     }
