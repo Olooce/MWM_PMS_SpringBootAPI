@@ -125,6 +125,7 @@ public class ExportService {
             final int[] rowCounter = {initialRowCounter};
 
             dataRepository.getTableData(tableName, dataRepository.getPrimaryKey(tableName), offset, CHUNK_SIZE, rs -> {
+                if(rs.next()) {
                 rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
                 if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
                     try {
@@ -140,6 +141,9 @@ public class ExportService {
                 totalRowsCreated[0]++;
                 if (totalRowsCreated[0] % 100000 == 0) {
                     logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
+                }
+                }else{
+                    dataAvailable[0] = false;
                 }
             });
 
