@@ -37,7 +37,7 @@ public class SystemUserController {
         if (user == null || !systemUserService.checkPassword(password, user.getPassword())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

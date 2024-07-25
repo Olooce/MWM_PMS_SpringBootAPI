@@ -89,7 +89,7 @@ public class DataRepository {
 
 
 
-    public void searchTable(String tableName, List<String> headers, Object searchTerm, int page, int size, RowCallbackHandler callbackHandler) {
+    public void searchTable(String tableName,String primaryKey, List<String> headers, Object searchTerm, int page, int size, RowCallbackHandler callbackHandler) {
         int offset = (page - 1) * size;
         String searchPattern = "%" + searchTerm + "%";
 
@@ -99,10 +99,13 @@ public class DataRepository {
                 .collect(Collectors.joining(" OR "));
 
         String sql = String.format(
-                "SELECT * FROM %s WHERE %s LIMIT ? OFFSET ?",
+                "SELECT * FROM %s ORDER BY %s WHERE %s LIMIT ? OFFSET ?",
                 tableName,
+                primaryKey,
                 columnsClause
         );
+
+        System.out.println(sql);
 
         // Parameters for the query
         Object[] params = IntStream.range(0, headers.size())

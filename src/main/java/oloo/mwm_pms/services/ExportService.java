@@ -159,7 +159,7 @@ public class ExportService {
             while (moreData) {
                 final boolean[] dataAvailable = {false};
 
-                dataRepository.searchTable(tableName,headers, searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
+                dataRepository.searchTable(tableName,primaryKey,headers, searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
                     final Map<String, Integer> columnNameIndexMap = new HashMap<>();
                     int rowCounter = sheet[0].getLastRowNum() + 1;
 
