@@ -7,9 +7,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,14 +25,29 @@ public class DataRepository {
        this.dataSource = dataSource;
     }
 
+//    public List<String> getTableHeaders(String tableName) throws SQLException {
+//        String schemaPattern = null;
+//        String catalogPattern = null;
+//        List<String> headers = new ArrayList<>();
+//        try (Connection connection = dataSource.getConnection()) {
+//            ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
+//            while (rs.next()) {
+//                headers.add(rs.getString("COLUMN_NAME"));
+//            }
+//        }
+//        System.out.println(headers);
+//        return headers;
+//    }
+
     public List<String> getTableHeaders(String tableName) throws SQLException {
-        String schemaPattern = null;
-        String catalogPattern = null;
         List<String> headers = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            ResultSet rs = connection.getMetaData().getColumns(catalogPattern, schemaPattern, tableName, null);
-            while (rs.next()) {
-                headers.add(rs.getString("COLUMN_NAME"));
+
+        try(Connecttion conn = dataSource.getConnection()){
+            Statement st = conn.createStatement();
+            ResultSet rset = st.executeQuery("SELECT * FROM \"{tableName}\" LIMIT 1", );
+            ResultSetMetaData md = rset.getMetaData();
+            for (int i = 1; i <= md.getColumnCount(); i++) {
+                headers.add(md.getColumnLabel(i));
             }
         }
         System.out.println(headers);
