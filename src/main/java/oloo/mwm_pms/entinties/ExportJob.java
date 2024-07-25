@@ -3,33 +3,49 @@ package oloo.mwm_pms.entinties;
 import java.util.Date;
 
 public class ExportJob {
-    private Date date;
+    private Date timeInitiated;
+    private String fileId;
+    private String fileName;
+    private long size;
+    private long totalRows;
+    private String errorMessage;
+    private String status;
+    private Date timeCompleted;
+
 
     public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 
     public void setFilePath(String string) {
+        this.fileName = string;
     }
 
-    public void setFileName(String s) {
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
-    public void setStatus(String inProgress) {
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public void setTimeInitiated(Date date) {
-        this.date = date;
+    public void setTimeInitiated(Date timeInitiated) {
+        this.timeInitiated = timeInitiated;
     }
 
-    public void setTotalRows(long l) {
+    public void setTotalRows(long totalRows) {
+        this.totalRows = totalRows;
     }
 
-    public void setFileSize(long length) {
+    public void setFileSize(long fileSize) {
+        this.size = fileSize;
     }
 
-    public void setTimeCompleted(Date date) {
+    public void setTimeCompleted(Date timeCompleted) {
+        this.timeCompleted = timeCompleted;
     }
 
-    public void setErrorMessage(String message) {
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }
