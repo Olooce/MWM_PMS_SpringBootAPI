@@ -1,5 +1,6 @@
 package oloo.mwm_pms.entinties;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 public class ExportJob {
@@ -11,6 +12,11 @@ public class ExportJob {
     private String errorMessage;
     private String status;
     private LocalDateTime timeCompleted;
+    private String filePath;
+    private LocalDateTime lastAccessTime;
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateModified;
+    private long exportId;
 
 
     public void setFileId(String fileId) {
@@ -50,14 +56,22 @@ public class ExportJob {
     }
 
     public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public void setDateModified(LocalDateTime dateModified) {
+        this.dateModified = dateModified;
     }
 
     public void setExportId(long exportId) {
+        this.exportId = exportId;
     }
 
     public void setLastAccessTime(LocalDateTime lastAccessTime) {
+        this.lastAccessTime = lastAccessTime;
+    }
+
+    public File getFilePath() {
+        return filePath;
     }
 }

@@ -5,6 +5,7 @@ import oloo.mwm_pms.repositories.ExportJobRepository;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -92,14 +93,14 @@ public class ExportService {
     private void processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException {
         processData(tableName, null, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
-            dataAvailable.set(true);
+            dataAvailable[0] = true;
         });
     }
 
     private void processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob) throws SQLException {
         processData(tableName, searchTerm, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
-            dataAvailable.set(true);
+            dataAvailable[0] = true;
         });
     }
 
@@ -138,6 +139,8 @@ public class ExportService {
 
             offset += CHUNK_SIZE;
             moreData = dataAvailable[0];
+
+            disposeRows(sheet[0]);
         }
 
         finalizeExportJob(exportJob, totalRowsCreated[0]);
@@ -171,6 +174,17 @@ public class ExportService {
             headerRow.createCell(i).setCellValue(headers.get(i));
         }
     }
+
+    private void disposeRows(Sheet sheet) {
+        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            if (row != null) {
+                sheet.removeRow(row);
+            }
+        }
+        ((SXSSFSheet) sheet).dispose();
+    }
+
 
     private void writeWorkbookToFile(Workbook workbook, ExportJob exportJob) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(exportJob.getFilePath())) {
