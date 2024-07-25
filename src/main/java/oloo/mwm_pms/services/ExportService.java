@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,140 +30,55 @@ import java.util.logging.Logger;
 
 @Service
 public class ExportService {
-    ExportJobRepository exportJobRepository;
-
     private static final Logger LOGGER = Logger.getLogger(ExportService.class.getName());
-    private final DataRepository dataRepository;
-    private final Path fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
     private static final int CHUNK_SIZE = 25000;
     private static final int MAX_ROWS_PER_SHEET = 1048574;
     private static final String TEMPDIR = "/home/oloo/IdeaProjects/mwm_pms/temp";
 
+    private final DataRepository dataRepository;
+    private final ExportJobRepository exportJobRepository;
+    private final Path fileStorageLocation;
+
     @Autowired
-    public ExportService(DataRepository dataRepository) {
+    public ExportService(DataRepository dataRepository, ExportJobRepository exportJobRepository) {
         this.dataRepository = dataRepository;
+        this.exportJobRepository = exportJobRepository;
+        this.fileStorageLocation = Paths.get("exported_files").toAbsolutePath().normalize();
         File directory = new File(fileStorageLocation.toString());
         if (!directory.exists()) {
             directory.mkdirs();
         }
     }
 
-
     @Async
     public void exportTableToExcelAsync(String tableName, String fileId) {
-        System.setProperty("java.io.tmpdir", TEMPDIR);
-
-        long startTime = System.currentTimeMillis();
-        final long[] currentTime = {startTime};
-        final long[] elapsedTime = new long[1];
-
-        ExportJob exportJob = new ExportJob();
-        exportJob.setFileId(fileId);
-        exportJob.setFilePath(fileStorageLocation.resolve(fileId + ".xlsx").toString());
-        exportJob.setFileName(fileId + ".xlsx");
-        exportJob.setStatus("IN_PROGRESS");
-        exportJob.setTimeInitiated(LocalDateTime.now());
-        exportJobRepository.save(exportJob);
-
-        File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
-
-        final long[] totalRowsCreated = {0};
-
-        try (Workbook workbook = new SXSSFWorkbook(1500)) {
-            final int[] sheetIndex = {0};
-            final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
-            List<String> headers = dataRepository.getTableHeaders(tableName);
-            String primaryKey = dataRepository.getPrimaryKey(tableName);
-//            System.out.println(headers);
-
-            createHeaderRow(sheet[0], headers);
-            System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
-
-            int offset = 0;
-            boolean moreData = true;
-
-            while (moreData) {
-                final boolean[] dataAvailable = {false};
-
-                dataRepository.getTableData(tableName,primaryKey, offset, CHUNK_SIZE, new RowCallbackHandler() {
-                    final Map<String, Integer> columnNameIndexMap = new HashMap<>();
-                    int rowCounter = sheet[0].getLastRowNum() + 1;
-
-                    @Override
-                    public void processRow(ResultSet rs) throws SQLException {
-                        if (rowCounter >= MAX_ROWS_PER_SHEET) {
-                            System.out.println("Sheet row limit reached. Creating new sheet.");
-                            sheetIndex[0]++;
-                            sheet[0] = workbook.createSheet("Sheet " + (sheetIndex[0] + 1));
-                            createHeaderRow(sheet[0], headers);
-                            rowCounter = 1;
-                            System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
-                        }
-
-                        if (columnNameIndexMap.isEmpty()) {
-                            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-                                columnNameIndexMap.put(rs.getMetaData().getColumnName(i), i);
-                            }
-                        }
-
-                        Row excelRow = sheet[0].createRow(rowCounter++);
-                        for (int i = 0; i < headers.size(); i++) {
-                            Integer columnIndex = columnNameIndexMap.get(headers.get(i));
-                            if (columnIndex != null) {
-                                excelRow.createCell(i).setCellValue(rs.getString(columnIndex));
-                            } else {
-                                excelRow.createCell(i).setCellValue("");
-                            }
-                        }
-
-                        totalRowsCreated[0]++;
-                        dataAvailable[0] = true;
-                        if (totalRowsCreated[0] % 100000 == 0){
-                            currentTime[0] = System.currentTimeMillis();
-                            elapsedTime[0] = (currentTime[0] - startTime)/1000;
-                            System.out.println("Elapsed Time: " + elapsedTime[0] /3600+ "H " + (elapsedTime[0] % 3600) /60 + "M " + elapsedTime[0] % 60 + "S");
-                            System.out.println("Total rows created: " + totalRowsCreated[0]);
-                        }
-                    }
-                });
-
-                offset += CHUNK_SIZE;
-                moreData = dataAvailable[0];
-            }
-
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                workbook.write(fos);
-                fos.close();
-                workbook.close();
-            }
-            exportJob.setTotalRows(totalRowsCreated[0]);
-            exportJob.setFileSize(file.length());
-            exportJob.setStatus("COMPLETED");
-            exportJob.setTimeCompleted(LocalDateTime.now());
-            exportJobRepository.save(exportJob);
-
-            System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
-            currentTime[0] = System.currentTimeMillis();
-            elapsedTime[0] = (currentTime[0] - startTime)/1000;
-            System.out.println("Elapsed Time: " + elapsedTime[0] /3600+ "H " + (elapsedTime[0] % 3600) /60 + "M " + elapsedTime[0] % 60 + "S");
+        setUpTempDir();
+        ExportJob exportJob = initializeExportJob(fileId);
+        try (Workbook workbook = new SXSSFWorkbook()) {
+            processTableData(tableName, workbook, exportJob);
+            writeWorkbookToFile(workbook, exportJob);
         } catch (IOException | SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
-            exportJob.setStatus("FAILED");
-            exportJob.setErrorMessage(e.getMessage());
-            exportJob.setTimeCompleted(LocalDateTime.now());
-            exportJobRepository.save(exportJob);
+            handleExportError(exportJob, e);
         }
-
     }
 
     @Async
     public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId) {
+        setUpTempDir();
+        ExportJob exportJob = initializeExportJob(fileId);
+        try (Workbook workbook = new SXSSFWorkbook()) {
+            processSearchResults(tableName, searchTerm, workbook, exportJob);
+            writeWorkbookToFile(workbook, exportJob);
+        } catch (IOException | SQLException e) {
+            handleExportError(exportJob, e);
+        }
+    }
+
+    private void setUpTempDir() {
         System.setProperty("java.io.tmpdir", TEMPDIR);
+    }
 
-        long startTime = System.currentTimeMillis();
-        final long[] currentTime = {startTime};
-        final long[] elapsedTime = new long[1];
-
+    private ExportJob initializeExportJob(String fileId) {
         ExportJob exportJob = new ExportJob();
         exportJob.setFileId(fileId);
         exportJob.setFilePath(fileStorageLocation.resolve(fileId + ".xlsx").toString());
@@ -172,96 +86,83 @@ public class ExportService {
         exportJob.setStatus("IN_PROGRESS");
         exportJob.setTimeInitiated(LocalDateTime.now());
         exportJobRepository.save(exportJob);
+        return exportJob;
+    }
 
-        File file = new File(fileStorageLocation.resolve(fileId + ".xlsx").toString());
+    private void processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException {
+        processData(tableName, null, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
+            createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
+            dataAvailable.set(true);
+        });
+    }
 
+    private void processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob) throws SQLException {
+        processData(tableName, searchTerm, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
+            createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
+            dataAvailable.set(true);
+        });
+    }
+
+    private void processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, RowProcessor rowProcessor) throws SQLException {
         final long[] totalRowsCreated = {0};
+        final long[] startTime = {System.currentTimeMillis()};
+        final long[] currentTime = {startTime[0]};
+        final long[] elapsedTime = new long[1];
 
-        try (Workbook workbook = new SXSSFWorkbook()) {
-            final int[] sheetIndex = {0};
-            final Sheet[] sheet = {workbook.createSheet("Sheet " + (sheetIndex[0] + 1))};
-            List<String> headers = dataRepository.getTableHeaders(tableName);
-            String primaryKey = dataRepository.getPrimaryKey(tableName);
-            createHeaderRow(sheet[0], headers);
+        final int[] sheetIndex = {0};
+        Sheet[] sheet = {createNewSheet(workbook, sheetIndex[0], tableName)};
+        List<String> headers = dataRepository.getTableHeaders(tableName);
+        createHeaderRow(sheet[0], headers);
 
-            System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
+        int offset = 0;
+        boolean moreData = true;
 
-            int offset = 0;
-            boolean moreData = true;
+        while (moreData) {
+            final Map<String, Integer> columnNameIndexMap = new HashMap<>();
+            final boolean[] dataAvailable = {false};
+            final int[] rowCounter = {sheet[0].getLastRowNum() + 1};
 
-            while (moreData) {
-                final boolean[] dataAvailable = {false};
+            dataRepository.getTableData(tableName, dataRepository.getPrimaryKey(tableName), offset, CHUNK_SIZE, rs -> {
+                rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
+                if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
+                    sheetIndex[0]++;
+                    sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                    createHeaderRow(sheet[0], headers);
+                    rowCounter[0] = 1;
+                }
+                totalRowsCreated[0]++;
+                if (totalRowsCreated[0] % 100000 == 0) {
+                    logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
+                }
+            });
 
-                dataRepository.searchTable(tableName,primaryKey,headers, searchTerm, offset / CHUNK_SIZE + 1, CHUNK_SIZE, new RowCallbackHandler() {
-                    final Map<String, Integer> columnNameIndexMap = new HashMap<>();
-                    int rowCounter = sheet[0].getLastRowNum() + 1;
-
-                    @Override
-                    public void processRow(ResultSet rs) throws SQLException {
-                        if (rowCounter >= MAX_ROWS_PER_SHEET) {
-                            System.out.println("Sheet row limit reached. Creating new sheet.");
-                            sheetIndex[0]++;
-                            sheet[0] = workbook.createSheet("Sheet " + (sheetIndex[0] + 1));
-                            createHeaderRow(sheet[0], headers);
-                            rowCounter = 1;
-                            System.out.println("Created header row for Sheet " + (sheetIndex[0] + 1));
-                        }
-
-                        if (columnNameIndexMap.isEmpty()) {
-                            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-                                columnNameIndexMap.put(rs.getMetaData().getColumnName(i), i);
-                            }
-                        }
-
-                        Row excelRow = sheet[0].createRow(rowCounter++);
-                        for (int i = 0; i < headers.size(); i++) {
-                            String columnName = headers.get(i);
-                            Integer columnIndex = columnNameIndexMap.get(columnName);
-                            if (columnIndex != null) {
-                                excelRow.createCell(i).setCellValue(rs.getString(columnIndex));
-                            } else {
-                                excelRow.createCell(i).setCellValue("");
-                            }
-                        }
-
-                        totalRowsCreated[0]++;
-                        dataAvailable[0] = true;
-                        if (totalRowsCreated[0] % 100000 == 0) {
-                            currentTime[0] = System.currentTimeMillis();
-                            elapsedTime[0] = (currentTime[0] - startTime) / 1000;
-                            System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
-                            System.out.println("Total rows created: " + totalRowsCreated[0]);
-                        }
-                    }
-                });
-
-                offset += CHUNK_SIZE;
-                moreData = dataAvailable[0];
-            }
-
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                workbook.write(fos);
-                fos.close();
-                workbook.close();
-            }
-
-            exportJob.setTotalRows(totalRowsCreated[0]);
-            exportJob.setFileSize(file.length());
-            exportJob.setStatus("COMPLETED");
-            exportJob.setTimeCompleted(LocalDateTime.now());
-            exportJobRepository.save(exportJob);
-
-            System.out.println("Export completed. Total rows created: " + totalRowsCreated[0]);
-            currentTime[0] = System.currentTimeMillis();
-            elapsedTime[0] = (currentTime[0] - startTime) / 1000;
-            System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
-        } catch (IOException | SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
-            exportJob.setStatus("FAILED");
-            exportJob.setErrorMessage(e.getMessage());
-            exportJob.setTimeCompleted(LocalDateTime.now());
-            exportJobRepository.save(exportJob);
+            offset += CHUNK_SIZE;
+            moreData = dataAvailable[0];
         }
+
+        finalizeExportJob(exportJob, totalRowsCreated[0]);
+    }
+
+    private void createExcelRow(ResultSet rs, List<String> headers, Map<String, Integer> columnNameIndexMap, int[] rowCounter, Sheet sheet) throws SQLException {
+        if (columnNameIndexMap.isEmpty()) {
+            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                columnNameIndexMap.put(rs.getMetaData().getColumnName(i), i);
+            }
+        }
+
+        Row excelRow = sheet.createRow(rowCounter[0]++);
+        for (int i = 0; i < headers.size(); i++) {
+            Integer columnIndex = columnNameIndexMap.get(headers.get(i));
+            if (columnIndex != null) {
+                excelRow.createCell(i).setCellValue(rs.getString(columnIndex));
+            } else {
+                excelRow.createCell(i).setCellValue("");
+            }
+        }
+    }
+
+    private Sheet createNewSheet(Workbook workbook, int sheetIndex, String tableName) {
+        return workbook.createSheet("Sheet " + (sheetIndex + 1));
     }
 
     private void createHeaderRow(Sheet sheet, List<String> headers) {
@@ -269,7 +170,40 @@ public class ExportService {
         for (int i = 0; i < headers.size(); i++) {
             headerRow.createCell(i).setCellValue(headers.get(i));
         }
-    }    public Resource loadFileAsResource(String fileId) throws Exception {
+    }
+
+    private void writeWorkbookToFile(Workbook workbook, ExportJob exportJob) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(exportJob.getFilePath())) {
+            workbook.write(fos);
+            workbook.close();
+        }
+    }
+
+    private void finalizeExportJob(ExportJob exportJob, long totalRowsCreated) {
+        File file = new File(exportJob.getFilePath());
+        exportJob.setTotalRows(totalRowsCreated);
+        exportJob.setFileSize(file.length());
+        exportJob.setStatus("COMPLETED");
+        exportJob.setTimeCompleted(LocalDateTime.now());
+        exportJobRepository.save(exportJob);
+    }
+
+    private void logProgress(long totalRowsCreated, long startTime, long[] currentTime, long[] elapsedTime) {
+        currentTime[0] = System.currentTimeMillis();
+        elapsedTime[0] = (currentTime[0] - startTime) / 1000;
+        System.out.println("Elapsed Time: " + elapsedTime[0] / 3600 + "H " + (elapsedTime[0] % 3600) / 60 + "M " + elapsedTime[0] % 60 + "S");
+        System.out.println("Total rows created: " + totalRowsCreated);
+    }
+
+    private void handleExportError(ExportJob exportJob, Exception e) {
+        LOGGER.log(Level.SEVERE, "Error writing Excel file", e);
+        exportJob.setStatus("FAILED");
+        exportJob.setErrorMessage(e.getMessage());
+        exportJob.setTimeCompleted(LocalDateTime.now());
+        exportJobRepository.save(exportJob);
+    }
+
+    public Resource loadFileAsResource(String fileId) throws Exception {
         Path filePath = fileStorageLocation.resolve(fileId + ".xlsx").normalize();
         Resource resource = new UrlResource(filePath.toUri());
         if (resource.exists()) {
@@ -277,5 +211,10 @@ public class ExportService {
         } else {
             throw new Exception("File not found " + fileId);
         }
+    }
+
+    @FunctionalInterface
+    private interface RowProcessor {
+        void processRow(ResultSet rs, List<String> headers, Map<String, Integer> columnNameIndexMap, int[] rowCounter, Sheet sheet, boolean[] dataAvailable) throws SQLException;
     }
 }
