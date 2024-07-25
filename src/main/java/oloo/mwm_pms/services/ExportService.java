@@ -125,31 +125,31 @@ public class ExportService {
             final int[] rowCounter = {initialRowCounter};
 
             dataRepository.getTableData(tableName, dataRepository.getPrimaryKey(tableName), offset, CHUNK_SIZE, rs -> {
-                if(rs.next()) {
-                rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
-                if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
-                    try {
-                        disposeRows(sheet[0]);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                if (rs.next()) {
+                    rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
+                    if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
+                        try {
+                            disposeRows(sheet[0]);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        sheetIndex[0]++;
+                        sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                        createHeaderRow(sheet[0], headers);
+                        rowCounter[0] = 1;
                     }
-                    sheetIndex[0]++;
-                    sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
-                    createHeaderRow(sheet[0], headers);
-                    rowCounter[0] = 1;
-                }
-                totalRowsCreated[0]++;
-                if (totalRowsCreated[0] % 100000 == 0) {
-                    logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
-                }
-                }else{
+                    totalRowsCreated[0]++;
+                    if (totalRowsCreated[0] % 100000 == 0) {
+                        logProgress(totalRowsCreated[0], startTime[0], currentTime, elapsedTime);
+                    }
+                    dataAvailable[0] = true;
+                } else {
                     dataAvailable[0] = false;
                 }
             });
 
             offset += CHUNK_SIZE;
             moreData = dataAvailable[0] && rowCounter[0] > initialRowCounter;
-
         }
 
         finalizeExportJob(exportJob, totalRowsCreated[0]);
