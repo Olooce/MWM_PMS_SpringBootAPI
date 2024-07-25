@@ -17,6 +17,7 @@ public class ExportJobRepository {
     public ExportJob mapRow(ResultSet rs, int rowNum) throws SQLException {
         ExportJob exportJob = new ExportJob();
 
+        exportJob.setExportId(rs.getLong("export_id"));
         exportJob.setFileId(rs.getString("file_id"));
         exportJob.setFileName(rs.getString("file_name"));
         exportJob.setTotalRows(rs.getLong("total_rows"));
@@ -24,6 +25,9 @@ public class ExportJobRepository {
         exportJob.setErrorMessage(rs.getString("error_message"));
         exportJob.setStatus(rs.getString("status"));
         exportJob.setTimeInitiated(rs.getTimestamp("time_initiated").toLocalDateTime());
+        exportJob.setTimeCompleted(rs.getTimestamp("time_completed").toLocalDateTime());
+        exportJob.setLastAccessTime(rs.getTimestamp("last_access_time").toLocalDateTime());
+        exportJob.setFilePath(rs.getString("file_path"));
         exportJob.setDateCreated(rs.getTimestamp("date_created").toLocalDateTime());
         exportJob.setDateModified(rs.getTimestamp("date_modified").toLocalDateTime());
         return exportJob;

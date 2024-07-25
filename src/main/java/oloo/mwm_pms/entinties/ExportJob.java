@@ -30,7 +30,7 @@ public class ExportJob {
         this.status = status;
     }
 
-    public void setTimeInitiated(Date timeInitiated) {
+    public void setTimeInitiated(LocalDateTime timeInitiated) {
         this.timeInitiated = timeInitiated;
     }
 
@@ -42,7 +42,7 @@ public class ExportJob {
         this.size = fileSize;
     }
 
-    public void setTimeCompleted(Date timeCompleted) {
+    public void setTimeCompleted(LocalDateTime timeCompleted) {
         this.timeCompleted = timeCompleted;
     }
 
@@ -54,5 +54,8 @@ public class ExportJob {
     }
 
     public void setDateModified(LocalDateTime dateModified) {
+    }
+
+    public void setExportId(long exportId) {
     }
 }
