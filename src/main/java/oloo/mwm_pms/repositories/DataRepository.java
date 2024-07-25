@@ -42,9 +42,15 @@ public class DataRepository {
     public List<String> getTableHeaders(String tableName) throws SQLException {
         List<String> headers = new ArrayList<>();
 
-        try(Connecttion conn = dataSource.getConnection()){
-            Statement st = conn.createStatement();
-            ResultSet rset = st.executeQuery("SELECT * FROM \"{tableName}\" LIMIT 1", );
+        if (!isValidTableName(tableName)) {
+            throw new SQLException("Invalid table name.");
+        }
+
+        String query = String.format("SELECT * FROM %s LIMIT 1", tableName);
+        try (Connection conn = dataSource.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rset = st.executeQuery(query)) {
+
             ResultSetMetaData md = rset.getMetaData();
             for (int i = 1; i <= md.getColumnCount(); i++) {
                 headers.add(md.getColumnLabel(i));
@@ -52,6 +58,11 @@ public class DataRepository {
         }
         System.out.println(headers);
         return headers;
+    }
+
+    private boolean isValidTableName(String tableName) {
+        // Sanitize to avoid SQL Injection, check for null, empty, non-alphanumeric characters, etc.
+        return tableName != null && tableName.matches("[a-zA-Z0-9_]+");
     }
 
 
