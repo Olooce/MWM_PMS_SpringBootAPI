@@ -1,5 +1,6 @@
 package oloo.mwm_pms.entinties;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class ExportJob {
@@ -47,5 +48,11 @@ public class ExportJob {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public void setDateCreated(LocalDateTime dateCreated) {
+    }
+
+    public void setDateModified(LocalDateTime dateModified) {
     }
 }

@@ -18,7 +18,12 @@ public class ExportJobRepository {
         ExportJob exportJob = new ExportJob();
 
         exportJob.setFileId(rs.getString("file_id"));
-
+        exportJob.setFileName(rs.getString("file_name"));
+        exportJob.setTotalRows(rs.getLong("total_rows"));
+        exportJob.setFileSize(rs.getLong("file_size"));
+        exportJob.setErrorMessage(rs.getString("error_message"));
+        exportJob.setStatus(rs.getString("status"));
+        exportJob.setTimeInitiated(rs.getTimestamp("time_initiated").toLocalDateTime());
         exportJob.setDateCreated(rs.getTimestamp("date_created").toLocalDateTime());
         exportJob.setDateModified(rs.getTimestamp("date_modified").toLocalDateTime());
         return exportJob;
