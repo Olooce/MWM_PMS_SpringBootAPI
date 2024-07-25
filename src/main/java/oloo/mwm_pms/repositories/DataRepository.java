@@ -99,13 +99,13 @@ public class DataRepository {
                 .collect(Collectors.joining(" OR "));
 
         String sql = String.format(
-                "SELECT * FROM %s ORDER BY %s WHERE %s LIMIT ? OFFSET ?",
+                "SELECT * FROM %s WHERE %s ORDER BY %s LIMIT ? OFFSET ?",
                 tableName,
-                primaryKey,
-                columnsClause
+                columnsClause,
+                primaryKey
         );
 
-        System.out.println(sql);
+//        System.out.println(sql);
 
         // Parameters for the query
         Object[] params = IntStream.range(0, headers.size())
