@@ -30,7 +30,7 @@ public class ExportController {
         this.exportService = exportService;
     }
 
-    @PostMapping("/api/export/{tableName}")
+    @GetMapping("/api/export/{tableName}")
     public SseEmitter initiateExport(@PathVariable String tableName) {
         SseEmitter emitter = new SseEmitter();
         String fileId = tableName + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -62,7 +62,7 @@ public class ExportController {
         return emitter;
     }
 
-    @GetMapping("/api/download/{fileId}")
+    @PostMapping("/api/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
         try {
             Resource resource = exportService.loadFileAsResource(fileId);

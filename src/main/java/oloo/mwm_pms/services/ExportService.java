@@ -191,11 +191,11 @@ public class ExportService {
             offset += CHUNK_SIZE;
             moreData = dataAvailable[0];
 
-            try {
-                emitter.send(SseEmitter.event().name("progress").data("Processed rows: " + totalRowsCreated[0]));
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Failed to send progress update to client", e);
-            }
+//            try {
+//                emitter.send(SseEmitter.event().name("progress").data("Processed rows: " + totalRowsCreated[0]));
+//            } catch (IOException e) {
+//                LOGGER.log(Level.WARNING, "Failed to send progress update to client", e);
+//            }
         }
 
         return totalRowsCreated;
