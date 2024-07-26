@@ -56,8 +56,8 @@ public class ExportService {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
         try (Workbook workbook = new SXSSFWorkbook(1000)) {
-            processTableData(tableName, workbook, exportJob);
-            writeWorkbookToFile(workbook, exportJob);
+            long[] totalRowsCreated = processTableData(tableName, workbook, exportJob);
+            writeWorkbookToFile(workbook, exportJob, totalRowsCreated);
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
         } finally {
@@ -70,8 +70,8 @@ public class ExportService {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
         try (Workbook workbook = new SXSSFWorkbook(1000)) {
-            processSearchResults(tableName, searchTerm, workbook, exportJob);
-            writeWorkbookToFile(workbook, exportJob);
+            long[] totalRowsCreated =  processSearchResults(tableName, searchTerm, workbook, exportJob);
+            writeWorkbookToFile(workbook, exportJob, totalRowsCreated);
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
         } finally {
@@ -94,28 +94,28 @@ public class ExportService {
         return exportJob;
     }
 
-    private void processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
-        processData(tableName, null, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
+    private long[] processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
+        return processData(tableName, null, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
             dataAvailable[0] = false;
         });
     }
 
-    private void processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
-        processData(tableName, searchTerm, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
+    private long[] processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
+        return processData(tableName, searchTerm, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
             dataAvailable[0] = true;
         });
     }
 
-    private void processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, RowProcessor rowProcessor) throws SQLException, IOException {
+    private long[] processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, RowProcessor rowProcessor) throws SQLException {
         final long[] totalRowsCreated = {0};
         final long startTime = System.currentTimeMillis();
         final long[] currentTime = {startTime};
         final long[] elapsedTime = new long[1];
 
         final int[] sheetIndex = {0};
-        final Sheet[] sheet = {createNewSheet(workbook, sheetIndex[0], tableName)};
+        final Sheet[] sheet = {createNewSheet(workbook, sheetIndex[0])};
         List<String> headers = dataRepository.getTableHeaders(tableName);
         String primaryKey = dataRepository.getPrimaryKey(tableName);
         createHeaderRow(sheet[0], headers);
@@ -140,7 +140,7 @@ public class ExportService {
                             if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
                                 disposeRows(sheet[0]);
                                 sheetIndex[0]++;
-                                sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                                sheet[0] = createNewSheet(workbook, sheetIndex[0]);
                                 createHeaderRow(sheet[0], headers);
                                 rowCounter[0] = 1; // Reset rowCounter after new sheet creation
                             }
@@ -164,7 +164,7 @@ public class ExportService {
                             if (rowCounter[0] >= MAX_ROWS_PER_SHEET) {
                                 disposeRows(sheet[0]);
                                 sheetIndex[0]++;
-                                sheet[0] = createNewSheet(workbook, sheetIndex[0], tableName);
+                                sheet[0] = createNewSheet(workbook, sheetIndex[0]);
                                 createHeaderRow(sheet[0], headers);
                                 rowCounter[0] = 1; // Reset rowCounter after new sheet creation
                             }
@@ -186,6 +186,7 @@ public class ExportService {
 
 //        finalizeExportJob(exportJob, totalRowsCreated[0]);
         System.out.println(exportJob);
+        return totalRowsCreated;
     }
 
 
@@ -207,7 +208,7 @@ public class ExportService {
         }
     }
 
-    private Sheet createNewSheet(Workbook workbook, int sheetIndex, String tableName) {
+    private Sheet createNewSheet(Workbook workbook, int sheetIndex) {
         LOGGER.info("Creating sheet: "+sheetIndex+1);
         return workbook.createSheet("Sheet " + (sheetIndex + 1));
 
@@ -230,7 +231,7 @@ public class ExportService {
         ((SXSSFSheet) sheet).flushRows();
     }
 
-    private void writeWorkbookToFile(Workbook workbook, ExportJob exportJob) throws IOException {
+    private void writeWorkbookToFile(Workbook workbook, ExportJob exportJob, long[] totalRowsCreated) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(exportJob.getFilePath())) {
             workbook.write(fos);
         }
