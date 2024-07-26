@@ -35,8 +35,7 @@ public class DataRepository {
                 headers.add(rs.getString("COLUMN_NAME"));
             }
         }
-        System.out.println(tableName);
-        System.out.println(headers);
+
         return headers;
     }
 
@@ -75,7 +74,6 @@ public class DataRepository {
             DatabaseMetaData metaData = conn.getMetaData();
             try (ResultSet pkResultSet = metaData.getPrimaryKeys(null, null, tableName)) {
                 if (pkResultSet.next()) {
-                    System.out.println(pkResultSet.getString("COLUMN_NAME"));
                     return pkResultSet.getString("COLUMN_NAME");
                 }
             }
@@ -104,8 +102,6 @@ public class DataRepository {
                 columnsClause,
                 primaryKey
         );
-
-//        System.out.println(sql);
 
         // Parameters for the query
         Object[] params = IntStream.range(0, headers.size())

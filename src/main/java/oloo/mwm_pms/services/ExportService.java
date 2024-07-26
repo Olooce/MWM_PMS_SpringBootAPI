@@ -184,8 +184,6 @@ public class ExportService {
             moreData = dataAvailable[0];
         }
 
-//        finalizeExportJob(exportJob, totalRowsCreated[0]);
-        System.out.println(exportJob);
         return totalRowsCreated;
     }
 
@@ -244,7 +242,6 @@ public class ExportService {
         exportJob.setFileSize(file.length());
         exportJob.setStatus("COMPLETED");
         exportJob.setTimeCompleted(LocalDateTime.now());
-        System.out.println(exportJob.getStatus());
         exportJobRepository.update(exportJob);
     }
 
