@@ -82,7 +82,7 @@ public class DataRepository {
     }
 
     public void getTableData(String tableName,String primaryKey, long offset, long limit, RowCallbackHandler callbackHandler) {
-        String query = String.format("SELECT * FROM %s ORDER BY %s LIMIT %d OFFSET %d", tableName,primaryKey,limit, offset);
+        String query = String.format("SELEC/T * FROM %s ORDER BY %s LIMIT %d OFFSET %d", tableName,primaryKey,limit, offset);
         jdbcTemplate.query(query, callbackHandler);
     }
 

@@ -14,8 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import oloo.mwm_pms.repositories.DataRepository;
 
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,34 +52,28 @@ public class ExportService {
     }
 
     @Async
-    public void exportTableToExcelAsync(String tableName, String fileId, SseEmitter emitter) {
+    public void exportTableToExcelAsync(String tableName, String fileId) {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
         try (Workbook workbook = new SXSSFWorkbook(1000)) {
-            long[] totalRows = processTableData(tableName, workbook, exportJob, emitter);
-            writeWorkbookToFile(workbook, exportJob, totalRows);
-            emitter.send(SseEmitter.event().name("completed").data("Export completed. File ID: " + fileId));
-            emitter.complete();
+            long[] totalRowsCreated = processTableData(tableName, workbook, exportJob);
+            writeWorkbookToFile(workbook, exportJob, totalRowsCreated);
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
-            emitter.completeWithError(e);
         } finally {
             cleanupTempFiles();
         }
     }
 
     @Async
-    public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId, SseEmitter emitter) {
+    public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId) {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
         try (Workbook workbook = new SXSSFWorkbook(1000)) {
-            long[] totalRows = processSearchResults(tableName, searchTerm, workbook, exportJob, emitter);
-            writeWorkbookToFile(workbook, exportJob, totalRows);
-            emitter.send(SseEmitter.event().name("completed").data("Export completed. File ID: " + fileId));
-            emitter.complete();
+            long[] totalRowsCreated =  processSearchResults(tableName, searchTerm, workbook, exportJob);
+            writeWorkbookToFile(workbook, exportJob, totalRowsCreated);
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
-            emitter.completeWithError(e);
         } finally {
             cleanupTempFiles();
         }
@@ -102,21 +94,21 @@ public class ExportService {
         return exportJob;
     }
 
-    private long[] processTableData(String tableName, Workbook workbook, ExportJob exportJob, SseEmitter emitter) throws SQLException, IOException {
-        return processData(tableName, null, workbook, exportJob,emitter, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
+    private long[] processTableData(String tableName, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
+        return processData(tableName, null, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
             dataAvailable[0] = false;
         });
     }
 
-    private long[] processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, SseEmitter emitter) throws SQLException, IOException {
-        return processData(tableName, searchTerm, workbook, exportJob,emitter, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
+    private long[] processSearchResults(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob) throws SQLException, IOException {
+        return processData(tableName, searchTerm, workbook, exportJob, (rs, headers, columnNameIndexMap, rowCounter, sheet, dataAvailable) -> {
             createExcelRow(rs, headers, columnNameIndexMap, rowCounter, sheet);
             dataAvailable[0] = true;
         });
     }
 
-    private long[] processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob,SseEmitter emitter, RowProcessor rowProcessor) throws SQLException {
+    private long[] processData(String tableName, Object searchTerm, Workbook workbook, ExportJob exportJob, RowProcessor rowProcessor) throws SQLException {
         final long[] totalRowsCreated = {0};
         final long startTime = System.currentTimeMillis();
         final long[] currentTime = {startTime};
@@ -190,12 +182,6 @@ public class ExportService {
             // Update offset and check if more data is available
             offset += CHUNK_SIZE;
             moreData = dataAvailable[0];
-
-//            try {
-//                emitter.send(SseEmitter.event().name("progress").data("Processed rows: " + totalRowsCreated[0]));
-//            } catch (IOException e) {
-//                LOGGER.log(Level.WARNING, "Failed to send progress update to client", e);
-//            }
         }
 
         return totalRowsCreated;
