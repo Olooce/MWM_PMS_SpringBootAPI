@@ -184,7 +184,7 @@ public class ExportService {
             moreData = dataAvailable[0];
         }
 
-        finalizeExportJob(exportJob, totalRowsCreated[0]);
+//        finalizeExportJob(exportJob, totalRowsCreated[0]);
         System.out.println(exportJob);
     }
 
@@ -234,6 +234,7 @@ public class ExportService {
         try (FileOutputStream fos = new FileOutputStream(exportJob.getFilePath())) {
             workbook.write(fos);
         }
+        finalizeExportJob(exportJob, totalRowsCreated[0]);
     }
 
     private void finalizeExportJob(ExportJob exportJob, long totalRowsCreated) {
