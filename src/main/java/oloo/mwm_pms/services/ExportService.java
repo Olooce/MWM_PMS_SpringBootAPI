@@ -52,28 +52,34 @@ public class ExportService {
     }
 
     @Async
-    public void exportTableToExcelAsync(String tableName, String fileId) {
+    public void exportTableToExcelAsync(String tableName, String fileId, SseEmitter emitter) {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
         try (Workbook workbook = new SXSSFWorkbook(1000)) {
-            long[] totalRowsCreated = processTableData(tableName, workbook, exportJob);
-            writeWorkbookToFile(workbook, exportJob, totalRowsCreated);
+            processTableData(tableName, workbook, exportJob, emitter);
+            writeWorkbookToFile(workbook, exportJob);
+            emitter.send(SseEmitter.event().name("completed").data("Export completed. File ID: " + fileId));
+            emitter.complete();
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
+            emitter.completeWithError(e);
         } finally {
             cleanupTempFiles();
         }
     }
 
     @Async
-    public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId) {
+    public void exportSearchResultsToExcelAsync(String tableName, Object searchTerm, String fileId, SseEmitter emitter) {
         setUpTempDir();
         ExportJob exportJob = initializeExportJob(fileId);
         try (Workbook workbook = new SXSSFWorkbook(1000)) {
-            long[] totalRowsCreated =  processSearchResults(tableName, searchTerm, workbook, exportJob);
-            writeWorkbookToFile(workbook, exportJob, totalRowsCreated);
+            processSearchResults(tableName, searchTerm, workbook, exportJob, emitter);
+            writeWorkbookToFile(workbook, exportJob);
+            emitter.send(SseEmitter.event().name("completed").data("Export completed. File ID: " + fileId));
+            emitter.complete();
         } catch (IOException | SQLException e) {
             handleExportError(exportJob, e);
+            emitter.completeWithError(e);
         } finally {
             cleanupTempFiles();
         }

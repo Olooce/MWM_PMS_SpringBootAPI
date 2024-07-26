@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -30,27 +31,35 @@ public class ExportController {
     }
 
     @PostMapping("/api/export/{tableName}")
-    public ResponseEntity<String> initiateExport(@PathVariable String tableName) {
-        // Generate a unique fileId based on the table name and current date/time
+    public SseEmitter initiateExport(@PathVariable String tableName) {
+        SseEmitter emitter = new SseEmitter();
         String fileId = tableName + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-        // Start the export process asynchronously
-        CompletableFuture.runAsync(() -> exportService.exportTableToExcelAsync(tableName, fileId));
+        CompletableFuture.runAsync(() -> {
+            try {
+                exportService.exportTableToExcelAsync(tableName, fileId, emitter);
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        });
 
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
+        return emitter;
     }
 
     @PostMapping("/api/exportSearch/{tableName}")
-    public ResponseEntity<String> initiateExport(@PathVariable String tableName, @RequestParam Object searchTerm) {
-        // Generate a unique fileId based on the table name and current date/time
+    public SseEmitter initiateExportSearch(@PathVariable String tableName, @RequestParam Object searchTerm) {
+        SseEmitter emitter = new SseEmitter();
         String fileId = tableName + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-        // Start the export process asynchronously
-        CompletableFuture.runAsync(() -> exportService.exportSearchResultsToExcelAsync(tableName, searchTerm, fileId));
+        CompletableFuture.runAsync(() -> {
+            try {
+                exportService.exportSearchResultsToExcelAsync(tableName, searchTerm, fileId, emitter);
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        });
 
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Export job initiated. File ID: " + fileId);
+        return emitter;
     }
 
     @GetMapping("/api/download/{fileId}")
