@@ -156,7 +156,7 @@ public class ExportService {
             } else {
                 dataRepository.getTableData(tableName, primaryKey, offset, CHUNK_SIZE, rs -> {
                     try {
-                        while (rs.next()) {
+                        do{
                             rowProcessor.processRow(rs, headers, columnNameIndexMap, rowCounter, sheet[0], dataAvailable);
                             dataAvailable[0] = true;
 
@@ -172,7 +172,7 @@ public class ExportService {
                             if (totalRowsCreated[0] % 1000 == 0) {
                                 logProgress(totalRowsCreated[0], startTime, currentTime, elapsedTime);
                             }
-                        }
+                        } while (rs.next());
                     } catch (SQLException | IOException e) {
                         throw new RuntimeException(e);
                     }
