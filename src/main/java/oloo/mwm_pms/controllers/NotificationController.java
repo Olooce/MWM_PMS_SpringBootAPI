@@ -17,7 +17,7 @@ public class NotificationController {
     private final ConcurrentLinkedQueue<String> notificationsQueue = new ConcurrentLinkedQueue<>();
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
-    private static final String CONNECTION_SUCCESS_MESSAGE = "Successfully connected to notifications!";
+//    private static final String CONNECTION_SUCCESS_MESSAGE = "Successfully connected to notifications!";
 
     @GetMapping(value = "/notifications", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> getNotifications() {
