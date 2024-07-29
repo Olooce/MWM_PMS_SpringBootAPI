@@ -24,7 +24,6 @@ public class NotificationController {
     public ResponseEntity<SseEmitter> getNotifications(@RequestParam String clientId) {
         SseEmitter emitter = new SseEmitter();
 
-        // Add the emitter to the map with the client ID
         emitters.put(clientId, emitter);
 
         // Send the connection success message
@@ -58,7 +57,6 @@ public class NotificationController {
                 emitter.send(notification);
             } catch (Exception e) {
                 emitter.completeWithError(e);
-                // Optionally remove the emitter if needed
             }
         }
     }
