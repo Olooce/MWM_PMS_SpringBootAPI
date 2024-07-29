@@ -261,6 +261,7 @@ public class ExportService {
         LOGGER.log(Level.SEVERE, "Error during export", e);
         exportJob.setStatus("FAILED");
         exportJobRepository.update(exportJob);
+        notificationController.addNotification("Exported failed!");
     }
 
     private void cleanupTempFiles() {
