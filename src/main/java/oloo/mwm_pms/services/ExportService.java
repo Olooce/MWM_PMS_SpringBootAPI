@@ -1,5 +1,6 @@
 package oloo.mwm_pms.services;
 
+import oloo.mwm_pms.controllers.NotificationController;
 import oloo.mwm_pms.entinties.ExportJob;
 import oloo.mwm_pms.repositories.ExportJobRepository;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,11 +40,13 @@ public class ExportService {
     private final DataRepository dataRepository;
     private final ExportJobRepository exportJobRepository;
     private final Path fileStorageLocation;
+    private final NotificationController notificationController;
 
     @Autowired
-    public ExportService(DataRepository dataRepository, ExportJobRepository exportJobRepository) {
+    public ExportService(DataRepository dataRepository, ExportJobRepository exportJobRepository, NotificationController notificationController) {
         this.dataRepository = dataRepository;
         this.exportJobRepository = exportJobRepository;
+        this.notificationController = notificationController;
         this.fileStorageLocation = Paths.get("exported_files").toAbsolutePath();
         File directory = new File(fileStorageLocation.toString());
         if (!directory.exists()) {
@@ -91,6 +94,7 @@ public class ExportService {
         exportJob.setStatus("IN_PROGRESS");
         exportJob.setTimeInitiated(LocalDateTime.now());
         exportJobRepository.save(exportJob);
+        notificationController.addNotification("Export Initiated successfully: " + LocalDateTime.now());
         return exportJob;
     }
 

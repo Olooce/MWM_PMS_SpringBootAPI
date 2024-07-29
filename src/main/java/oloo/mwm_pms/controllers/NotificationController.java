@@ -14,13 +14,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RequestMapping("/api")
 public class NotificationController {
 
-    // A queue to store the notifications
     private final ConcurrentLinkedQueue<String> notificationsQueue = new ConcurrentLinkedQueue<>();
-
-    // A list of connected clients
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
-    // Endpoint to handle server-sent events
+    private static final String CONNECTION_SUCCESS_MESSAGE = "Successfully connected to notifications!";
+
     @GetMapping(value = "/notifications", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> getNotifications() {
         SseEmitter emitter = new SseEmitter();
@@ -28,9 +26,13 @@ public class NotificationController {
         // Add the emitter to the list of clients
         emitters.add(emitter);
 
-        // Send notifications to the client
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
+        // Send the connection success message
+//        try {
+//            emitter.send(CONNECTION_SUCCESS_MESSAGE);
+//        } catch (Exception e) {
+//            emitter.completeWithError(e);
+//            emitters.remove(emitter);
+//        }
 
         // Send existing notifications
         while (!notificationsQueue.isEmpty()) {
@@ -38,16 +40,18 @@ public class NotificationController {
                 emitter.send(notificationsQueue.poll());
             } catch (Exception e) {
                 emitter.completeWithError(e);
+                emitters.remove(emitter);
             }
         }
+
+        emitter.onCompletion(() -> emitters.remove(emitter));
+        emitter.onTimeout(() -> emitters.remove(emitter));
 
         return ResponseEntity.ok(emitter);
     }
 
-    // Method to add a new notification
     public void addNotification(String notification) {
         notificationsQueue.add(notification);
-        // Broadcast the notification to all connected clients
         for (SseEmitter emitter : emitters) {
             try {
                 emitter.send(notification);
@@ -58,3 +62,4 @@ public class NotificationController {
         }
     }
 }
+
