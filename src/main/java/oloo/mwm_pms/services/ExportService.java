@@ -254,6 +254,7 @@ public class ExportService {
         elapsedTime[0] = (currentTime[0] - startTime) / 1000;
         LOGGER.info(String.format("Elapsed Time: %dH %dM %dS", elapsedTime[0] / 3600, (elapsedTime[0] % 3600) / 60, elapsedTime[0] % 60));
         LOGGER.info("Total rows created: " + totalRowsCreated);
+        notificationController.addNotification("Exported " + totalRowsCreated +" records");
     }
 
     private void handleExportError(ExportJob exportJob, Exception e) {
