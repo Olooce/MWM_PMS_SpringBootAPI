@@ -55,7 +55,7 @@ public class ExportJobRepository {
 
     public List<ExportJob> findAll(int page, int size) {
         int offset = page * size;
-        return jdbcTemplate.query("SELECT * FROM exports LIMIT ? OFFSET ?",
+        return jdbcTemplate.query("SELECT * FROM exports ORDER BY time_completed LIMIT ? OFFSET ?",
                 new Object[]{size, offset},
                 new ExportJobRowMapper()
         );
