@@ -17,7 +17,7 @@ public class ExportJobRepository {
     public ExportJobRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
+
     public void save(ExportJob exportJob) {
         String sql = "INSERT INTO exports (file_id, file_name, total_rows, file_size, error_message, status, time_initiated, time_completed, last_access_time, file_path) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

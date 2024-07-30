@@ -1,5 +1,7 @@
 package oloo.mwm_pms.controllers;
 
+import oloo.mwm_pms.entinties.ExportJob;
+import oloo.mwm_pms.repositories.ExportJobRepository;
 import oloo.mwm_pms.services.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -17,16 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
 public class ExportController {
 
     private final ExportService exportService;
+    private final ExportJobRepository exportJobRepository;
 
     @Autowired
-    public ExportController(ExportService exportService) {
+    public ExportController(ExportService exportService, ExportJobRepository exportJobRepository) {
         this.exportService = exportService;
+        this.exportJobRepository = exportJobRepository;
     }
 
     @PostMapping("/api/export/{tableName}")
@@ -55,6 +60,11 @@ public class ExportController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @GetMapping("/api/listExports")
+    public List<ExportJob> listExports(@RequestParam int page, @RequestParam int size) {
+        return exportJobRepository.findAll(page, size);
     }
 
 }
