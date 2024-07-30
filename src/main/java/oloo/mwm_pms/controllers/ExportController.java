@@ -52,6 +52,7 @@ public class ExportController {
 
     @GetMapping("/api/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
+        System.out.println(fileId);
         try {
             Resource resource = exportService.loadFileAsResource(fileId);
             return ResponseEntity.ok()

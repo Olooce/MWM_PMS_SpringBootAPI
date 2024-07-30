@@ -279,7 +279,7 @@ public class ExportService {
     }
 
     public Resource loadFileAsResource(String fileId) throws IOException {
-        Path filePath = fileStorageLocation.resolve(fileId).normalize();
+        Path filePath = fileStorageLocation.resolve(fileId);
         Resource resource = new UrlResource(filePath.toUri());
         if (resource.exists() && resource.isReadable()) {
             return resource;
