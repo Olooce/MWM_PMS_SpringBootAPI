@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -71,16 +72,39 @@ public class ExportJobRepository {
             exportJob.setFileId(rs.getString("file_id"));
             exportJob.setFileName(rs.getString("file_name"));
             exportJob.setTotalRows(rs.getLong("total_rows"));
-            exportJob.setFileSize(rs.getLong("file_size")); // Assuming fileSize corresponds to size
+            exportJob.setFileSize(rs.getLong("file_size"));
             exportJob.setErrorMessage(rs.getString("error_message"));
             exportJob.setStatus(rs.getString("status"));
-            exportJob.setTimeInitiated(rs.getTimestamp("time_initiated").toLocalDateTime());
-            exportJob.setTimeCompleted(rs.getTimestamp("time_completed").toLocalDateTime());
-            exportJob.setLastAccessTime(rs.getTimestamp("last_access_time").toLocalDateTime());
+
+            // Check for null timestamps before calling toLocalDateTime()
+            Timestamp timeInitiated = rs.getTimestamp("time_initiated");
+            if (timeInitiated != null) {
+                exportJob.setTimeInitiated(timeInitiated.toLocalDateTime());
+            }
+
+            Timestamp timeCompleted = rs.getTimestamp("time_completed");
+            if (timeCompleted != null) {
+                exportJob.setTimeCompleted(timeCompleted.toLocalDateTime());
+            }
+
+            Timestamp lastAccessTime = rs.getTimestamp("last_access_time");
+            if (lastAccessTime != null) {
+                exportJob.setLastAccessTime(lastAccessTime.toLocalDateTime());
+            }
+
+            Timestamp dateCreated = rs.getTimestamp("date_created");
+            if (dateCreated != null) {
+                exportJob.setDateCreated(dateCreated.toLocalDateTime());
+            }
+
+            Timestamp dateModified = rs.getTimestamp("date_modified");
+            if (dateModified != null) {
+                exportJob.setDateModified(dateModified.toLocalDateTime());
+            }
+
             exportJob.setFilePath(rs.getString("file_path"));
-            exportJob.setDateCreated(rs.getTimestamp("date_created").toLocalDateTime());
-            exportJob.setDateModified(rs.getTimestamp("date_modified").toLocalDateTime());
             return exportJob;
         }
     }
+
 }
