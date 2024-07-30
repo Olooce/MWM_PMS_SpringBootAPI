@@ -17,8 +17,7 @@ public class ExportJobRepository {
     public ExportJobRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
-    // Save a new ExportJob record
+    
     public void save(ExportJob exportJob) {
         String sql = "INSERT INTO exports (file_id, file_name, total_rows, file_size, error_message, status, time_initiated, time_completed, last_access_time, file_path) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -37,7 +36,6 @@ public class ExportJobRepository {
         );
     }
 
-    // Update an existing ExportJob record
     public void update(ExportJob exportJob) {
         String sql = "UPDATE exports SET file_name = ?, total_rows = ?, file_size = ?, error_message = ?, status = ?, time_initiated = ?, time_completed = ?, last_access_time = ?, file_path = ?" +
                 "WHERE file_id = ?";
@@ -55,7 +53,6 @@ public class ExportJobRepository {
         );
     }
 
-    // Find all ExportJob records with pagination
     public List<ExportJob> findAll(int page, int size) {
         int offset = page * size;
         return jdbcTemplate.query("SELECT * FROM exports LIMIT ? OFFSET ?",
@@ -64,7 +61,7 @@ public class ExportJobRepository {
         );
     }
 
-    // RowMapper implementation to map rows to ExportJob objects
+
     private static class ExportJobRowMapper implements RowMapper<ExportJob> {
         @Override
         public ExportJob mapRow(ResultSet rs, int rowNum) throws SQLException {
