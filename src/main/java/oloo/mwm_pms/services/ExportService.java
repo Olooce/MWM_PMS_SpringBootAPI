@@ -279,7 +279,8 @@ public class ExportService {
     }
 
     public Resource loadFileAsResource(String fileId) throws IOException {
-        Path filePath = fileStorageLocation.resolve(fileId);
+        Path filePath = fileStorageLocation.resolve(fileId + ".xlsx");
+        System.out.println(filePath);
         Resource resource = new UrlResource(filePath.toUri());
         if (resource.exists() && resource.isReadable()) {
             return resource;
