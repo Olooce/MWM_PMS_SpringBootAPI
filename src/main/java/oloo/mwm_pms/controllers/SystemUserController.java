@@ -3,13 +3,11 @@ package oloo.mwm_pms.controllers;
 import oloo.mwm_pms.entinties.SystemUser;
 import oloo.mwm_pms.dtos.AuthRequest;
 import oloo.mwm_pms.services.SystemUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/systemusers")
@@ -17,9 +15,10 @@ public class SystemUserController {
 
     private final SystemUserService systemUserService;
 
-    public SystemUserController(SystemUserService systemUserService) {
-        this.systemUserService  = systemUserService;
-
+    @Autowired
+    public SystemUserController(SystemUserService systemUserService, JwtUtil jwtUtil) {
+        this.systemUserService = systemUserService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -38,9 +37,9 @@ public class SystemUserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        String jwt = jwtUtil.generateToken(user);
+        return ResponseEntity.ok(jwt);
     }
-
 
 }
 
