@@ -1,7 +1,7 @@
 package oloo.mwm_pms.controllers;
 
-import oloo.mwm_pms.entinties.SystemUser;
 import oloo.mwm_pms.dtos.AuthRequest;
+import oloo.mwm_pms.entinties.SystemUser;
 import oloo.mwm_pms.services.SystemUserService;
 import oloo.mwm_pms.utils.JwtUtil;
 import org.springframework.hateoas.PagedModel;
@@ -24,8 +24,9 @@ public class SystemUserController {
     @GetMapping
     public PagedModel<SystemUser> getAllSystemUsers(@RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size) {
-       return systemUserService.getAllSystemUsers(page, size);
+        return systemUserService.getAllSystemUsers(page, size);
     }
+
     @PostMapping("/auth")
     public ResponseEntity<String> authenticateUser(@RequestBody AuthRequest authRequest) {
         String username = authRequest.getUsername();
@@ -37,9 +38,7 @@ public class SystemUserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        String jwt = jwtUtil.generateToken(user);
+        String jwt = jwtUtil.generateToken(user.getUsername());
         return ResponseEntity.ok(jwt);
     }
-
 }
-
