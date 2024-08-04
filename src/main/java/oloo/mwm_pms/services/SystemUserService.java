@@ -1,29 +1,41 @@
 package oloo.mwm_pms.services;
 
-
-import oloo.mwm_pms.controllers.SystemUserController;
 import oloo.mwm_pms.entinties.SystemUser;
 import oloo.mwm_pms.repositories.SystemUserRepository;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 
 @Service
-public class SystemUserService {
+public class SystemUserService implements UserDetailsService {
+
     private final SystemUserRepository systemUserRepository;
 
     public SystemUserService(SystemUserRepository systemUserRepository) {
         this.systemUserRepository = systemUserRepository;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        SystemUser systemUser = systemUserRepository.findByUsername(username);
+        if (systemUser == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new org.springframework.security.core.userdetails.User(
+                systemUser.getUsername(),
+                systemUser.getPassword(),
+                systemUser.getRoles() // Make sure SystemUser has a getRoles method returning Collection<GrantedAuthority>
+        );
+    }
 
-    public PagedModel<SystemUser> getAllSystemUsers(int page,
-                                                     int size) {
-        List<SystemUser> systemUsers = systemUserRepository.findAll(page, size +1 );
+    public PagedModel<SystemUser> getAllSystemUsers(int page, int size) {
+        List<SystemUser> systemUsers = systemUserRepository.findAll(page, size + 1);
 
         if (systemUsers == null || systemUsers.isEmpty()) {
             return null;
@@ -50,7 +62,6 @@ public class SystemUserService {
         return pagedModel;
     }
 
-
     public SystemUser findByUsername(String username) {
         return systemUserRepository.findByUsername(username);
     }
@@ -60,5 +71,3 @@ public class SystemUserService {
         return hashedRawPassword.equals(hashedPassword);
     }
 }
-
-

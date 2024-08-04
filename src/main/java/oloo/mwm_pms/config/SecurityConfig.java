@@ -5,6 +5,7 @@ import oloo.mwm_pms.services.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,15 +22,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private SystemUserService systemUserService;
+    private final SystemUserService systemUserService;
+    private final JwtFilter jwtFilter;
 
     @Autowired
-    private JwtFilter jwtFilter;
+    public SecurityConfig(SystemUserService systemUserService, JwtFilter jwtFilter) {
+        this.systemUserService = systemUserService;
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return (UserDetailsService) systemUserService;
+        return systemUserService; // No casting needed
     }
 
     @Bean
