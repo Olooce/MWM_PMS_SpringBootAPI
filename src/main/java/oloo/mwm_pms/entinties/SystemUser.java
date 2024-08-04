@@ -1,6 +1,9 @@
 package oloo.mwm_pms.entinties;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 public class SystemUser {
     private Long userId;
@@ -121,6 +124,10 @@ public class SystemUser {
 
     public void setDateModified(LocalDateTime dateModified) {
         this.dateModified = dateModified;
+    }
+
+    public Collection<? extends GrantedAuthority> getRoles() {
+        return java.util.List.of();
     }
 }
 
