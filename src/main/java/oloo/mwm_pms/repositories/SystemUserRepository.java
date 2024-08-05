@@ -24,7 +24,7 @@ public class SystemUserRepository {
 
     public List<SystemUser> findAll(int page, int size) {
         int offset = page * size;
-        return jdbcTemplate.query("SELECT * FROM system_users LIMIT ? OFFSET ?",
+        return jdbcTemplate.query("SELECT * FROM system_users ORDER BY user_id LIMIT ? OFFSET ?",
                 new Object[]{size, offset},
                 new SystemUserRowMapper()
         );
