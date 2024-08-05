@@ -2,10 +2,8 @@ package oloo.mwm_pms.config;
 
 import oloo.mwm_pms.filters.JwtFilter;
 import oloo.mwm_pms.services.SystemUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,7 +23,6 @@ public class SecurityConfig {
     private final SystemUserService systemUserService;
     private final JwtFilter jwtFilter;
 
-    @Autowired
     public SecurityConfig(SystemUserService systemUserService, JwtFilter jwtFilter) {
         this.systemUserService = systemUserService;
         this.jwtFilter = jwtFilter;
@@ -33,7 +30,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return systemUserService; // No casting needed
+        return systemUserService; // Use the SystemUserService
     }
 
     @Bean

@@ -38,7 +38,6 @@ public class SystemUserService implements UserDetailsService {
             return null;
         }
 
-        // Check if there is a next page
         boolean hasNext = systemUsers.size() > size;
         if (hasNext) {
             systemUsers = systemUsers.subList(0, size);
@@ -48,7 +47,6 @@ public class SystemUserService implements UserDetailsService {
         WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SystemUserController.class).getAllSystemUsers(page, size));
         PagedModel<SystemUser> pagedModel = PagedModel.of(systemUsers, pageMetadata, linkBuilder.withSelfRel());
 
-        // Add links for next and previous pages, if applicable
         if (page > 0) {
             pagedModel.add(linkBuilder.slash("?page=" + (page - 1) + "&size=" + size).withRel("prev"));
         }

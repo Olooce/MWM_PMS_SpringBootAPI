@@ -1,10 +1,10 @@
 package oloo.mwm_pms.filters;
 
+import oloo.mwm_pms.services.SystemUserService;
 import oloo.mwm_pms.utils.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,15 +19,10 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private UserDetailsService userDetailsService;
+    private final SystemUserService userDetailsService;
 
-    // Constructor injection
-    public JwtFilter(JwtUtil jwtUtil) {
+    public JwtFilter(JwtUtil jwtUtil, SystemUserService userDetailsService) {
         this.jwtUtil = jwtUtil;
-    }
-
-    // Setter injection
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
@@ -46,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
                 var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -62,5 +57,4 @@ public class JwtFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-
 }
