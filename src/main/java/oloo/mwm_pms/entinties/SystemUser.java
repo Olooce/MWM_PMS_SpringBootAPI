@@ -1,11 +1,14 @@
 package oloo.mwm_pms.entinties;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 
-public class SystemUser {
+public class SystemUser implements UserDetails {
     private Long userId;
     private Long employeeId;
     private String username;
@@ -29,6 +32,7 @@ public class SystemUser {
         return employeeId;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -41,6 +45,7 @@ public class SystemUser {
         return userStatusDescription;
     }
 
+    @Override
     public String getPassword() {
         return pwd;
     }
@@ -126,8 +131,28 @@ public class SystemUser {
         this.dateModified = dateModified;
     }
 
-    public Collection<? extends GrantedAuthority> getRoles() {
-        return java.util.List.of();
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return userStatus == UserStatus.ACTIVE;
     }
 }
-

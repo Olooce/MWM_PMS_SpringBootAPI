@@ -1,6 +1,5 @@
 package oloo.mwm_pms.services;
 
-
 import oloo.mwm_pms.controllers.SystemUserController;
 import oloo.mwm_pms.entinties.SystemUser;
 import oloo.mwm_pms.repositories.SystemUserRepository;
@@ -29,11 +28,7 @@ public class SystemUserService implements UserDetailsService {
         if (systemUser == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new org.springframework.security.core.userdetails.User(
-                systemUser.getUsername(),
-                systemUser.getPassword(),
-                systemUser.getRoles() // Make sure SystemUser has a getRoles method returning Collection<GrantedAuthority>
-        );
+        return systemUser;
     }
 
     public PagedModel<SystemUser> getAllSystemUsers(int page, int size) {
