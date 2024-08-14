@@ -4,7 +4,7 @@ This API provides endpoints for managing various entities within a Payroll Manag
 
 ## Related Repositories
 
-This project also includes a [React client application](https://github.com/username/employee-management-client) that interacts with the API.
+This project also includes a [React client application](https://github.com/Olooce/MWM_PMS_WEbReactUI) that interacts with the API.
 
 
 ## Controllers and Endpoints
