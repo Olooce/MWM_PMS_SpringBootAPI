@@ -2,6 +2,11 @@
 
 This API provides endpoints for managing various entities within a Payroll Management System (PMS). The entities include Allowances, Bank Details, Branches, Contact Information, Deductions, Departments, Employees, Exports, Notifications, Salaries, System Users, and Taxes. Each controller corresponds to a specific entity and provides RESTful endpoints for CRUD operations and other specific actions.
 
+## Related Repositories
+
+This project also includes a [React client application](https://github.com/username/employee-management-client) that interacts with the API.
+
+
 ## Controllers and Endpoints
 
 ### 1. **AllowanceController**
