@@ -32,7 +32,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
                 .exposedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
                 .allowCredentials(true)
-                .allowedOrigins(getAllowedOrigins().toArray(new String[0]));
+                .allowedOrigins("http://localhost:3000",
+                        "https://delicate-clearly-roughy.ngrok-free.app");
+//                .allowedOrigins(getAllowedOrigins().toArray(new String[0]));
     }
 
     private Set<String> getAllowedOrigins() {
