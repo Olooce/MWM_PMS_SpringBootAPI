@@ -37,9 +37,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     private Set<String> getAllowedOrigins() {
         Set<String> allowedOrigins = new HashSet<>(List.of(
+                "https://delicate-clearly-roughy.ngrok-free.app",
                 "http://localhost:3000",
-                "https://your-client-domain.com",
-                "https://delicate-clearly-roughy.ngrok-free.app"
+                "https://your-client-domain.com"
+
         ));
         for (String blockedOrigin : blockedOrigins) {
             allowedOrigins.remove(blockedOrigin);
