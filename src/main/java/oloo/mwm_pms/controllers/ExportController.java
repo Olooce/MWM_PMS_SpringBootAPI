@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class ExportController {
 
     private final ExportService exportService;
