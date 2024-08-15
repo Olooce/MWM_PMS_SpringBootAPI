@@ -22,17 +22,17 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
+                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
                 .exposedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
                 .allowCredentials(true)
-                .allowedOrigins(getAllowedOrigins().toArray(new String[0])); // Apply allowed origins
+                .allowedOrigins(getAllowedOrigins().toArray(new String[0]));
     }
 
     private Set<String> getAllowedOrigins() {
         Set<String> allowedOrigins = new HashSet<>(List.of(
-                "http://localhost:3000", // Replace with your client URL
-                "https://your-client-domain.com", // Add other allowed origins here
-                "https://delicate-clearly-roughy.ngrok-free.app" // Add your ngrok URL here
+                "http://localhost:3000",
+                "https://your-client-domain.com",
+                "https://delicate-clearly-roughy.ngrok-free.app"
         ));
         for (String blockedOrigin : blockedOrigins) {
             allowedOrigins.remove(blockedOrigin);
