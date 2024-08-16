@@ -6,6 +6,8 @@ This API provides endpoints for managing various entities within a Payroll Manag
 
 This project also includes a [React client application](https://github.com/Olooce/MWM_PMS_WEbReactUI) that interacts with the API.
 
+[![Build and Dockerize Java Application](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml/badge.svg)](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml)
+
 
 ## Controllers and Endpoints
 
