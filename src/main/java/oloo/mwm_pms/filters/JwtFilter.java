@@ -2,7 +2,10 @@ package oloo.mwm_pms.filters;
 
 import oloo.mwm_pms.services.SystemUserService;
 import oloo.mwm_pms.utils.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -21,6 +24,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final SystemUserService userDetailsService;
 
+    @Autowired
     public JwtFilter(JwtUtil jwtUtil, SystemUserService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
