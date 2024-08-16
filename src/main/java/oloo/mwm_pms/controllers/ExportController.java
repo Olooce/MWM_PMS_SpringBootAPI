@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@CrossOrigin(origins = {"https://delicate-clearly-roughy.ngrok-free.app","http://localhost:3000"}, allowCredentials = "true")
+
 public class ExportController {
 
     private final ExportService exportService;
