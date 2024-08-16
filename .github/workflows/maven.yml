@@ -1,5 +1,10 @@
 name: Build and Dockerize Java Application
 
+# This GitHub Actions workflow compiles a Java project with Maven,
+# caches dependencies to speed up execution, and packages the compiled 
+# code into an executable JAR file. Once the JAR file is built, 
+# the workflow creates a Docker image based on it.
+
 on:
   push:
     branches: [ "master" ]
