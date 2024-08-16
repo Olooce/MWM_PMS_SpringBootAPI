@@ -85,9 +85,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://delicate-clearly-roughy.ngrok-free.app")
-                .allowedMethods("*")
-                .allowedHeaders("*");
+                .allowedOrigins("*") // Allow all origins
+                .allowedMethods("*") // Allow all HTTP methods
+                .allowedHeaders("*"); // Allow all headers
     }
 }
+
 
