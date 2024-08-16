@@ -9,7 +9,7 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline
 
-# Copy the entire project into the container
+# Copy the entire project into the container //
 COPY . .
 
 # Build the project and package it into a JAR file
