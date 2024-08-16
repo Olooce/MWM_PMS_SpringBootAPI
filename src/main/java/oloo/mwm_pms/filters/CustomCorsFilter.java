@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class CustomCorsFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // Initialization logic if needed
     }
 
