@@ -31,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
-                .allowCredentials(true)
+                .allowCredentials(false)
                 .allowedOrigins("*");
 //                .allowedOrigins(getAllowedOrigins().toArray(new String[0]));
     }
