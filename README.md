@@ -1,3 +1,5 @@
+[![Build and Dockerize Java Application](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml/badge.svg)](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml)
+
 ## Introduction
 
 This API provides endpoints for managing various entities within a Payroll Management System (PMS). The entities include Allowances, Bank Details, Branches, Contact Information, Deductions, Departments, Employees, Exports, Notifications, Salaries, System Users, and Taxes. Each controller corresponds to a specific entity and provides RESTful endpoints for CRUD operations and other specific actions.
@@ -5,9 +7,6 @@ This API provides endpoints for managing various entities within a Payroll Manag
 ## Related Repositories
 
 This project also includes a [React client application](https://github.com/Olooce/MWM_PMS_WEbReactUI) that interacts with the API.
-
-[![Build and Dockerize Java Application](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml/badge.svg)](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml)
-
 
 ## Controllers and Endpoints
 
