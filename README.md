@@ -23,7 +23,7 @@ This project also includes a [React client application](https://github.com/Olooc
 - **Endpoints:**
   - `GET /bankdetails`: Retrieves a paginated list of all bank details.
     - **Parameters:**
-      - `page` (default: `0`)
+      - `page` (default: `1`)
       - `size` (default: `10`)
 
 ### 3. **BranchController**
@@ -31,7 +31,7 @@ This project also includes a [React client application](https://github.com/Olooc
 - **Endpoints:**
   - `GET /branches`: Retrieves a paginated list of all branches.
     - **Parameters:**
-      - `page` (default: `0`)
+      - `page` (default: `1`)
       - `size` (default: `10`)
 
 ### 4. **ContactInfoController**
@@ -39,7 +39,7 @@ This project also includes a [React client application](https://github.com/Olooc
 - **Endpoints:**
   - `GET /contactinfo`: Retrieves a paginated list of all contact information.
     - **Parameters:**
-      - `page` (default: `0`)
+      - `page` (default: `1`)
       - `size` (default: `10`)
 
 ### 5. **DeductionController**
@@ -47,7 +47,7 @@ This project also includes a [React client application](https://github.com/Olooc
 - **Endpoints:**
   - `GET /deductions`: Retrieves a paginated list of all deductions.
     - **Parameters:**
-      - `page` (default: `0`)
+      - `page` (default: `1`)
       - `size` (default: `10`)
 
 ### 6. **DepartmentController**
@@ -55,7 +55,7 @@ This project also includes a [React client application](https://github.com/Olooc
 - **Endpoints:**
   - `GET /departments`: Retrieves a paginated list of all departments.
     - **Parameters:**
-      - `page` (default: `0`)
+      - `page` (default: `1`)
       - `size` (default: `10`)
 
 ### 7. **EmployeeController**
@@ -119,7 +119,7 @@ This project also includes a [React client application](https://github.com/Olooc
 - **Endpoints:**
   - `GET /systemusers`: Retrieves a paginated list of all system users.
     - **Parameters:**
-      - `page` (default: `0`)
+      - `page` (default: `1`)
       - `size` (default: `10`)
   - `POST /systemusers/auth`: Authenticates a system user and generates a JWT token.
 
@@ -128,7 +128,7 @@ This project also includes a [React client application](https://github.com/Olooc
 - **Endpoints:**
   - `GET /taxes`: Retrieves a paginated list of all taxes.
     - **Parameters:**
-      - `page` (default: `0`)
+      - `page` (default: `1`)
       - `size` (default: `10`)
 
 ## Usage
