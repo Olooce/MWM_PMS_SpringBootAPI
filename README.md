@@ -1,4 +1,4 @@
-[![Build and Dockerize Java Application](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml/badge.svg)](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml)
+[![Build and Dockerize](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml/badge.svg)](https://github.com/Olooce/MWM_PMS_SpringBootAPI/actions/workflows/maven.yml)
 
 ## Introduction
 
