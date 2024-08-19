@@ -1,10 +1,8 @@
-name: Build and Dockerize Java Application
+name: Build and Dockerize
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: [ "master"]
 
 jobs:
   build-and-dockerize:
